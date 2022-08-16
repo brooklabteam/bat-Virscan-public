@@ -1,7 +1,5 @@
----
-title: "counts to Z-scores"
-output: html_document
----
+
+# Converting peptide counts from PhIP-Seq to Z-scores
 
 Here are directions for transforming peptide counts from the PhIP-Seq data into Z-scores for input into AVARDA:
 
@@ -25,14 +23,18 @@ library(mmR)
 library(data.table)
 ```
 
-#Input data format:
+## Input data format:
+
 "counts" table should have peptides as rows and samples as columns. "id" column represents peptide id's. "input" column is the combined counts for mock-IP wells. propTrim is the proportion of each bin to be removed from the extreme of the distribution. makeGroupSize is the size of each bin. cols_to_not_evaluate excludes columns from being used for z-score calculation.
 
 ```{r set wd and load count data}
 setwd = ("/Users/ecornelius/Desktop/UChi_Brook_Lab/bat_VirScan_main")
 ```
 
-#convert the tsv to csv prior to this step. you will need to do text to column with ',' separator
+## Convert the tsv to csv prior to this step. 
+
+You will need to do text to column with ',' separator
+
 ```{r load count data}
 counts=read.csv("PhIP13_counts.csv")
 ```
