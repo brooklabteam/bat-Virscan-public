@@ -1,0 +1,15 @@
+dir_home=/Users/caraebrook/Documents/AVARDA/
+file_annotation=/Users/caraebrook/Documents/AVARDA/ref_seq/VirScan_v1_annot.txt
+file_aln=/Users/caraebrook/Documents/AVARDA/ref_seq/aln_sparse.pkl
+zscore_file=/Users/caraebrook/Documents/AVARDA/input/Pteropus_alecto_PhIP_data.csv
+use_filter=True
+Z_threshold=10
+p_threshold=0.01
+x_threshold=2
+bh_threshold=0.05
+organism=False
+dir_input=/Users/caraebrook/Documents/AVARDA/input/
+dir_result=/Users/caraebrook/Documents/AVARDA/results/
+dir_ref_seq=/Users/caraebrook/Documents/AVARDA/ref_seq/
+sub_dir=/Users/caraebrook/Documents/AVARDA/results/Pteropus_alecto_PhIP_data 30-June-2019_10-45/
+graph_dir=/Users/caraebrook/Documents/AVARDA/results/Pteropus_alecto_PhIP_data 30-June-2019_10-45/sample_networks/

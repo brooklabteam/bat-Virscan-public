@@ -1,0 +1,458 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="Z-Score" attr.type="double" for="node" id="d0" />
+  <graph edgedefault="undirected">
+    <node id="58">
+      <data key="d0">14.8</data>
+    </node>
+    <node id="505">
+      <data key="d0">101.4</data>
+    </node>
+    <node id="506">
+      <data key="d0">60.6</data>
+    </node>
+    <node id="4529">
+      <data key="d0">58.1</data>
+    </node>
+    <node id="4530">
+      <data key="d0">88.7</data>
+    </node>
+    <node id="5334">
+      <data key="d0">21.7</data>
+    </node>
+    <node id="8430">
+      <data key="d0">124.2</data>
+    </node>
+    <node id="8431">
+      <data key="d0">87.3</data>
+    </node>
+    <node id="10583">
+      <data key="d0">23.2</data>
+    </node>
+    <node id="55540">
+      <data key="d0">18.2</data>
+    </node>
+    <node id="85079">
+      <data key="d0">20.3</data>
+    </node>
+    <node id="85080">
+      <data key="d0">20.5</data>
+    </node>
+    <node id="92608">
+      <data key="d0">13.2</data>
+    </node>
+    <node id="80672">
+      <data key="d0">155.1</data>
+    </node>
+    <node id="80673">
+      <data key="d0">66.2</data>
+    </node>
+    <node id="53321">
+      <data key="d0">46.2</data>
+    </node>
+    <node id="53320">
+      <data key="d0">54.4</data>
+    </node>
+    <node id="78818">
+      <data key="d0">157.1</data>
+    </node>
+    <node id="78819">
+      <data key="d0">176.3</data>
+    </node>
+    <node id="78863">
+      <data key="d0">168.2</data>
+    </node>
+    <node id="78862">
+      <data key="d0">58.6</data>
+    </node>
+    <node id="80698">
+      <data key="d0">69.0</data>
+    </node>
+    <node id="80699">
+      <data key="d0">75.1</data>
+    </node>
+    <node id="70999">
+      <data key="d0">83.8</data>
+    </node>
+    <node id="70998">
+      <data key="d0">82.3</data>
+    </node>
+    <node id="71484">
+      <data key="d0">74.0</data>
+    </node>
+    <node id="71483">
+      <data key="d0">113.4</data>
+    </node>
+    <node id="80693">
+      <data key="d0">61.7</data>
+    </node>
+    <node id="69990">
+      <data key="d0">163.4</data>
+    </node>
+    <node id="69991">
+      <data key="d0">45.0</data>
+    </node>
+    <node id="15323">
+      <data key="d0">16.2</data>
+    </node>
+    <node id="71507">
+      <data key="d0">81.0</data>
+    </node>
+    <node id="71506">
+      <data key="d0">116.2</data>
+    </node>
+    <node id="16633">
+      <data key="d0">89.9</data>
+    </node>
+    <node id="16634">
+      <data key="d0">80.7</data>
+    </node>
+    <node id="80684">
+      <data key="d0">99.2</data>
+    </node>
+    <node id="71980">
+      <data key="d0">75.2</data>
+    </node>
+    <node id="71981">
+      <data key="d0">67.2</data>
+    </node>
+    <node id="54527">
+      <data key="d0">67.5</data>
+    </node>
+    <node id="54526">
+      <data key="d0">17.1</data>
+    </node>
+    <node id="20651">
+      <data key="d0">64.5</data>
+    </node>
+    <node id="20652">
+      <data key="d0">60.3</data>
+    </node>
+    <node id="71497">
+      <data key="d0">51.3</data>
+    </node>
+    <node id="71498">
+      <data key="d0">53.7</data>
+    </node>
+    <node id="78811">
+      <data key="d0">89.3</data>
+    </node>
+    <node id="78810">
+      <data key="d0">68.4</data>
+    </node>
+    <node id="78798">
+      <data key="d0">107.6</data>
+    </node>
+    <node id="78797">
+      <data key="d0">102.3</data>
+    </node>
+    <node id="56981">
+      <data key="d0">22.0</data>
+    </node>
+    <node id="12869">
+      <data key="d0">19.5</data>
+    </node>
+    <node id="18060">
+      <data key="d0">22.4</data>
+    </node>
+    <node id="89233">
+      <data key="d0">22.4</data>
+    </node>
+    <node id="82832">
+      <data key="d0">22.8</data>
+    </node>
+    <node id="31479">
+      <data key="d0">42.1</data>
+    </node>
+    <node id="31480">
+      <data key="d0">35.6</data>
+    </node>
+    <node id="32016">
+      <data key="d0">21.7</data>
+    </node>
+    <node id="33694">
+      <data key="d0">15.0</data>
+    </node>
+    <node id="90115">
+      <data key="d0">16.1</data>
+    </node>
+    <node id="41586">
+      <data key="d0">12.2</data>
+    </node>
+    <node id="47298">
+      <data key="d0">13.2</data>
+    </node>
+    <node id="47299">
+      <data key="d0">19.8</data>
+    </node>
+    <node id="47767">
+      <data key="d0">13.3</data>
+    </node>
+    <node id="50700">
+      <data key="d0">12.2</data>
+    </node>
+    <node id="56393">
+      <data key="d0">10.3</data>
+    </node>
+    <node id="57207">
+      <data key="d0">55.5</data>
+    </node>
+    <node id="61092">
+      <data key="d0">10.2</data>
+    </node>
+    <node id="64401">
+      <data key="d0">53.3</data>
+    </node>
+    <node id="64644">
+      <data key="d0">14.8</data>
+    </node>
+    <node id="70468">
+      <data key="d0">10.3</data>
+    </node>
+    <node id="71538">
+      <data key="d0">24.3</data>
+    </node>
+    <node id="71539">
+      <data key="d0">13.6</data>
+    </node>
+    <node id="72251">
+      <data key="d0">22.3</data>
+    </node>
+    <node id="73737">
+      <data key="d0">105.9</data>
+    </node>
+    <node id="74908">
+      <data key="d0">16.1</data>
+    </node>
+    <edge source="58" target="55540" />
+    <edge source="58" target="85079" />
+    <edge source="58" target="85080" />
+    <edge source="58" target="92608" />
+    <edge source="505" target="80672" />
+    <edge source="505" target="80673" />
+    <edge source="505" target="53321" />
+    <edge source="505" target="53320" />
+    <edge source="505" target="78818" />
+    <edge source="505" target="78819" />
+    <edge source="505" target="78863" />
+    <edge source="505" target="78862" />
+    <edge source="505" target="80698" />
+    <edge source="505" target="80699" />
+    <edge source="505" target="70999" />
+    <edge source="505" target="70998" />
+    <edge source="505" target="71484" />
+    <edge source="505" target="71483" />
+    <edge source="505" target="80693" />
+    <edge source="505" target="69990" />
+    <edge source="505" target="69991" />
+    <edge source="505" target="506" />
+    <edge source="505" target="15323" />
+    <edge source="505" target="71507" />
+    <edge source="505" target="71506" />
+    <edge source="505" target="8430" />
+    <edge source="505" target="8431" />
+    <edge source="505" target="16633" />
+    <edge source="505" target="16634" />
+    <edge source="505" target="80684" />
+    <edge source="505" target="4530" />
+    <edge source="505" target="4529" />
+    <edge source="505" target="71980" />
+    <edge source="505" target="71981" />
+    <edge source="505" target="54527" />
+    <edge source="505" target="54526" />
+    <edge source="505" target="20651" />
+    <edge source="505" target="20652" />
+    <edge source="505" target="71497" />
+    <edge source="505" target="71498" />
+    <edge source="505" target="78811" />
+    <edge source="505" target="78810" />
+    <edge source="505" target="78798" />
+    <edge source="505" target="78797" />
+    <edge source="506" target="80672" />
+    <edge source="506" target="80673" />
+    <edge source="506" target="53321" />
+    <edge source="506" target="53320" />
+    <edge source="506" target="78818" />
+    <edge source="506" target="78819" />
+    <edge source="506" target="78863" />
+    <edge source="506" target="78862" />
+    <edge source="506" target="80698" />
+    <edge source="506" target="80699" />
+    <edge source="506" target="70999" />
+    <edge source="506" target="70998" />
+    <edge source="506" target="71484" />
+    <edge source="506" target="71483" />
+    <edge source="506" target="80693" />
+    <edge source="506" target="69990" />
+    <edge source="506" target="69991" />
+    <edge source="506" target="15323" />
+    <edge source="506" target="71507" />
+    <edge source="506" target="71506" />
+    <edge source="506" target="8430" />
+    <edge source="506" target="8431" />
+    <edge source="506" target="16633" />
+    <edge source="506" target="16634" />
+    <edge source="506" target="80684" />
+    <edge source="506" target="4530" />
+    <edge source="506" target="4529" />
+    <edge source="506" target="71980" />
+    <edge source="506" target="71981" />
+    <edge source="506" target="54527" />
+    <edge source="506" target="54526" />
+    <edge source="506" target="20651" />
+    <edge source="506" target="20652" />
+    <edge source="506" target="71497" />
+    <edge source="506" target="71498" />
+    <edge source="506" target="78811" />
+    <edge source="506" target="78810" />
+    <edge source="506" target="78798" />
+    <edge source="506" target="78797" />
+    <edge source="4529" target="80672" />
+    <edge source="4529" target="80673" />
+    <edge source="4529" target="53321" />
+    <edge source="4529" target="53320" />
+    <edge source="4529" target="78818" />
+    <edge source="4529" target="78819" />
+    <edge source="4529" target="78863" />
+    <edge source="4529" target="78862" />
+    <edge source="4529" target="80698" />
+    <edge source="4529" target="80699" />
+    <edge source="4529" target="70999" />
+    <edge source="4529" target="70998" />
+    <edge source="4529" target="71484" />
+    <edge source="4529" target="71483" />
+    <edge source="4529" target="80693" />
+    <edge source="4529" target="69990" />
+    <edge source="4529" target="69991" />
+    <edge source="4529" target="15323" />
+    <edge source="4529" target="71507" />
+    <edge source="4529" target="71506" />
+    <edge source="4529" target="8430" />
+    <edge source="4529" target="8431" />
+    <edge source="4529" target="16633" />
+    <edge source="4529" target="16634" />
+    <edge source="4529" target="80684" />
+    <edge source="4529" target="4530" />
+    <edge source="4529" target="71980" />
+    <edge source="4529" target="71981" />
+    <edge source="4529" target="54527" />
+    <edge source="4529" target="54526" />
+    <edge source="4529" target="20651" />
+    <edge source="4529" target="20652" />
+    <edge source="4529" target="71497" />
+    <edge source="4529" target="71498" />
+    <edge source="4529" target="78811" />
+    <edge source="4529" target="78810" />
+    <edge source="4529" target="78798" />
+    <edge source="4529" target="78797" />
+    <edge source="4530" target="80672" />
+    <edge source="4530" target="80673" />
+    <edge source="4530" target="53321" />
+    <edge source="4530" target="53320" />
+    <edge source="4530" target="78818" />
+    <edge source="4530" target="78819" />
+    <edge source="4530" target="78863" />
+    <edge source="4530" target="78862" />
+    <edge source="4530" target="80698" />
+    <edge source="4530" target="80699" />
+    <edge source="4530" target="70999" />
+    <edge source="4530" target="70998" />
+    <edge source="4530" target="71484" />
+    <edge source="4530" target="71483" />
+    <edge source="4530" target="80693" />
+    <edge source="4530" target="69990" />
+    <edge source="4530" target="69991" />
+    <edge source="4530" target="15323" />
+    <edge source="4530" target="71507" />
+    <edge source="4530" target="71506" />
+    <edge source="4530" target="8430" />
+    <edge source="4530" target="8431" />
+    <edge source="4530" target="16633" />
+    <edge source="4530" target="16634" />
+    <edge source="4530" target="80684" />
+    <edge source="4530" target="71980" />
+    <edge source="4530" target="71981" />
+    <edge source="4530" target="54527" />
+    <edge source="4530" target="54526" />
+    <edge source="4530" target="20651" />
+    <edge source="4530" target="20652" />
+    <edge source="4530" target="71497" />
+    <edge source="4530" target="71498" />
+    <edge source="4530" target="78811" />
+    <edge source="4530" target="78810" />
+    <edge source="4530" target="78798" />
+    <edge source="4530" target="78797" />
+    <edge source="5334" target="56981" />
+    <edge source="8430" target="69990" />
+    <edge source="8430" target="69991" />
+    <edge source="8430" target="71498" />
+    <edge source="8430" target="71497" />
+    <edge source="8430" target="80684" />
+    <edge source="8430" target="20651" />
+    <edge source="8430" target="20652" />
+    <edge source="8430" target="54527" />
+    <edge source="8430" target="54526" />
+    <edge source="8430" target="15323" />
+    <edge source="8430" target="80693" />
+    <edge source="8430" target="78863" />
+    <edge source="8430" target="78862" />
+    <edge source="8430" target="78797" />
+    <edge source="8430" target="78798" />
+    <edge source="8430" target="78810" />
+    <edge source="8430" target="78811" />
+    <edge source="8430" target="80673" />
+    <edge source="8430" target="80672" />
+    <edge source="8430" target="16634" />
+    <edge source="8430" target="16633" />
+    <edge source="8430" target="71981" />
+    <edge source="8430" target="71980" />
+    <edge source="8430" target="8431" />
+    <edge source="8430" target="53320" />
+    <edge source="8430" target="53321" />
+    <edge source="8430" target="80699" />
+    <edge source="8430" target="80698" />
+    <edge source="8430" target="71484" />
+    <edge source="8430" target="71483" />
+    <edge source="8430" target="78818" />
+    <edge source="8430" target="78819" />
+    <edge source="8430" target="70999" />
+    <edge source="8430" target="70998" />
+    <edge source="8430" target="71506" />
+    <edge source="8430" target="71507" />
+    <edge source="8431" target="69990" />
+    <edge source="8431" target="69991" />
+    <edge source="8431" target="71498" />
+    <edge source="8431" target="71497" />
+    <edge source="8431" target="80684" />
+    <edge source="8431" target="20651" />
+    <edge source="8431" target="20652" />
+    <edge source="8431" target="54527" />
+    <edge source="8431" target="54526" />
+    <edge source="8431" target="15323" />
+    <edge source="8431" target="80693" />
+    <edge source="8431" target="78863" />
+    <edge source="8431" target="78862" />
+    <edge source="8431" target="78797" />
+    <edge source="8431" target="78798" />
+    <edge source="8431" target="78810" />
+    <edge source="8431" target="78811" />
+    <edge source="8431" target="80673" />
+    <edge source="8431" target="80672" />
+    <edge source="8431" target="16634" />
+    <edge source="8431" target="16633" />
+    <edge source="8431" target="71981" />
+    <edge source="8431" target="71980" />
+    <edge source="8431" target="53320" />
+    <edge source="8431" target="53321" />
+    <edge source="8431" target="80699" />
+    <edge source="8431" target="80698" />
+    <edge source="8431" target="71484" />
+    <edge source="8431" target="71483" />
+    <edge source="8431" target="78818" />
+    <edge source="8431" target="78819" />
+    <edge source="8431" target="70999" />
+    <edge source="8431" target="70998" />
+    <edge source="8431" target="71506" />
+    <edge source="8431" target="71507" />
+  </graph>
+</graphml>

@@ -1,0 +1,282 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="Z-Score" attr.type="double" for="node" id="d0" />
+  <graph edgedefault="undirected">
+    <node id="1814">
+      <data key="d0">10.3</data>
+    </node>
+    <node id="3656">
+      <data key="d0">98.6</data>
+    </node>
+    <node id="3657">
+      <data key="d0">64.1</data>
+    </node>
+    <node id="95880">
+      <data key="d0">47.4</data>
+    </node>
+    <node id="4783">
+      <data key="d0">11.3</data>
+    </node>
+    <node id="95891">
+      <data key="d0">46.8</data>
+    </node>
+    <node id="7344">
+      <data key="d0">17.7</data>
+    </node>
+    <node id="8632">
+      <data key="d0">13.0</data>
+    </node>
+    <node id="9185">
+      <data key="d0">12.2</data>
+    </node>
+    <node id="81519">
+      <data key="d0">13.1</data>
+    </node>
+    <node id="94233">
+      <data key="d0">99.9</data>
+    </node>
+    <node id="94611">
+      <data key="d0">72.4</data>
+    </node>
+    <node id="81350">
+      <data key="d0">24.8</data>
+    </node>
+    <node id="93021">
+      <data key="d0">24.9</data>
+    </node>
+    <node id="22274">
+      <data key="d0">17.6</data>
+    </node>
+    <node id="95644">
+      <data key="d0">24.1</data>
+    </node>
+    <node id="93878">
+      <data key="d0">16.4</data>
+    </node>
+    <node id="81483">
+      <data key="d0">26.2</data>
+    </node>
+    <node id="35011">
+      <data key="d0">39.7</data>
+    </node>
+    <node id="93459">
+      <data key="d0">48.0</data>
+    </node>
+    <node id="93039">
+      <data key="d0">28.8</data>
+    </node>
+    <node id="31342">
+      <data key="d0">15.4</data>
+    </node>
+    <node id="12196">
+      <data key="d0">13.1</data>
+    </node>
+    <node id="12197">
+      <data key="d0">13.6</data>
+    </node>
+    <node id="20021">
+      <data key="d0">15.6</data>
+    </node>
+    <node id="20723">
+      <data key="d0">15.8</data>
+    </node>
+    <node id="22089">
+      <data key="d0">10.1</data>
+    </node>
+    <node id="89277">
+      <data key="d0">13.3</data>
+    </node>
+    <node id="25131">
+      <data key="d0">14.1</data>
+    </node>
+    <node id="27097">
+      <data key="d0">10.0</data>
+    </node>
+    <node id="28756">
+      <data key="d0">14.2</data>
+    </node>
+    <node id="28866">
+      <data key="d0">11.7</data>
+    </node>
+    <node id="84599">
+      <data key="d0">11.9</data>
+    </node>
+    <node id="84600">
+      <data key="d0">23.9</data>
+    </node>
+    <node id="84591">
+      <data key="d0">12.9</data>
+    </node>
+    <node id="84663">
+      <data key="d0">10.7</data>
+    </node>
+    <node id="84664">
+      <data key="d0">10.8</data>
+    </node>
+    <node id="84587">
+      <data key="d0">11.1</data>
+    </node>
+    <node id="84588">
+      <data key="d0">27.6</data>
+    </node>
+    <node id="81665">
+      <data key="d0">13.5</data>
+    </node>
+    <node id="31674">
+      <data key="d0">13.5</data>
+    </node>
+    <node id="31810">
+      <data key="d0">12.2</data>
+    </node>
+    <node id="32455">
+      <data key="d0">14.6</data>
+    </node>
+    <node id="83392">
+      <data key="d0">11.8</data>
+    </node>
+    <node id="32812">
+      <data key="d0">11.0</data>
+    </node>
+    <node id="35842">
+      <data key="d0">13.4</data>
+    </node>
+    <node id="37141">
+      <data key="d0">10.3</data>
+    </node>
+    <node id="37376">
+      <data key="d0">20.4</data>
+    </node>
+    <node id="37580">
+      <data key="d0">12.3</data>
+    </node>
+    <node id="39388">
+      <data key="d0">10.8</data>
+    </node>
+    <node id="40100">
+      <data key="d0">14.6</data>
+    </node>
+    <node id="41993">
+      <data key="d0">13.7</data>
+    </node>
+    <node id="42024">
+      <data key="d0">11.7</data>
+    </node>
+    <node id="42780">
+      <data key="d0">16.9</data>
+    </node>
+    <node id="44090">
+      <data key="d0">14.3</data>
+    </node>
+    <node id="44625">
+      <data key="d0">18.1</data>
+    </node>
+    <node id="46413">
+      <data key="d0">19.0</data>
+    </node>
+    <node id="46983">
+      <data key="d0">12.1</data>
+    </node>
+    <node id="47279">
+      <data key="d0">17.7</data>
+    </node>
+    <node id="51200">
+      <data key="d0">14.1</data>
+    </node>
+    <node id="51510">
+      <data key="d0">15.8</data>
+    </node>
+    <node id="52260">
+      <data key="d0">10.3</data>
+    </node>
+    <node id="84568">
+      <data key="d0">64.3</data>
+    </node>
+    <node id="60420">
+      <data key="d0">11.3</data>
+    </node>
+    <node id="60458">
+      <data key="d0">10.0</data>
+    </node>
+    <node id="61386">
+      <data key="d0">13.2</data>
+    </node>
+    <node id="63157">
+      <data key="d0">13.6</data>
+    </node>
+    <node id="63158">
+      <data key="d0">46.3</data>
+    </node>
+    <node id="63732">
+      <data key="d0">25.2</data>
+    </node>
+    <node id="63972">
+      <data key="d0">10.2</data>
+    </node>
+    <node id="64154">
+      <data key="d0">10.9</data>
+    </node>
+    <node id="66948">
+      <data key="d0">18.6</data>
+    </node>
+    <node id="68767">
+      <data key="d0">11.9</data>
+    </node>
+    <node id="69777">
+      <data key="d0">17.1</data>
+    </node>
+    <node id="72928">
+      <data key="d0">12.6</data>
+    </node>
+    <node id="74794">
+      <data key="d0">10.3</data>
+    </node>
+    <node id="76211">
+      <data key="d0">34.5</data>
+    </node>
+    <node id="77277">
+      <data key="d0">21.8</data>
+    </node>
+    <node id="77278">
+      <data key="d0">11.6</data>
+    </node>
+    <node id="77331">
+      <data key="d0">18.3</data>
+    </node>
+    <node id="77332">
+      <data key="d0">15.0</data>
+    </node>
+    <node id="78216">
+      <data key="d0">15.7</data>
+    </node>
+    <node id="79552">
+      <data key="d0">16.9</data>
+    </node>
+    <edge source="3656" target="3657" />
+    <edge source="95880" target="81519" />
+    <edge source="95880" target="94233" />
+    <edge source="95880" target="94611" />
+    <edge source="95880" target="81350" />
+    <edge source="95880" target="93021" />
+    <edge source="95880" target="22274" />
+    <edge source="95880" target="95644" />
+    <edge source="95880" target="93878" />
+    <edge source="95880" target="81483" />
+    <edge source="95880" target="35011" />
+    <edge source="95880" target="93459" />
+    <edge source="95880" target="95891" />
+    <edge source="95880" target="93039" />
+    <edge source="95891" target="81519" />
+    <edge source="95891" target="94233" />
+    <edge source="95891" target="94611" />
+    <edge source="95891" target="81350" />
+    <edge source="95891" target="93021" />
+    <edge source="95891" target="22274" />
+    <edge source="95891" target="95644" />
+    <edge source="95891" target="93878" />
+    <edge source="95891" target="81483" />
+    <edge source="95891" target="35011" />
+    <edge source="95891" target="93459" />
+    <edge source="95891" target="93039" />
+    <edge source="9185" target="31342" />
+  </graph>
+</graphml>

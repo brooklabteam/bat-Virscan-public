@@ -1,7 +1,10 @@
 
 # Converting peptide counts from PhIP-Seq to Z-scores
 
-Here are directions for transforming peptide counts from the PhIP-Seq data into Z-scores for input into AVARDA:
+Here are directions for transforming peptide counts from the PhIP-Seq data into Z-scores for input into AVARDA.
+We first received peptide counts in raw form (see subfolders within the "/raw-data/PhIP-Seq/") from gamma-poisson modeling of sequencing reads (*link to pipeline*). To convert these to Z-scores for input to AVARDA (*link to package*), we ran the script below.
+
+*Emily, note that you need to include all of these .tar.gz zip files in this folder so that someone can exactly repeat your steps with only this repo.*
 
 ```{r install packages from source}
 install.packages("VGAM")
@@ -26,6 +29,8 @@ library(data.table)
 ## Input data format:
 
 "counts" table should have peptides as rows and samples as columns. "id" column represents peptide id's. "input" column is the combined counts for mock-IP wells. propTrim is the proportion of each bin to be removed from the extreme of the distribution. makeGroupSize is the size of each bin. cols_to_not_evaluate excludes columns from being used for z-score calculation.
+
+*Emily, we need to include the raw counts csv files in here so that this is replicable.*
 
 ```{r set wd and load count data}
 setwd = ("/Users/ecornelius/Desktop/UChi_Brook_Lab/bat_VirScan_main")

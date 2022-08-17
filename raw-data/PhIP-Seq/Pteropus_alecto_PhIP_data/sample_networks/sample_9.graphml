@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="Z-Score" attr.type="double" for="node" id="d0" />
+  <graph edgedefault="undirected">
+    <node id="10583">
+      <data key="d0">14.8</data>
+    </node>
+    <node id="15935">
+      <data key="d0">15.3</data>
+    </node>
+    <node id="29534">
+      <data key="d0">15.0</data>
+    </node>
+    <node id="58436">
+      <data key="d0">13.0</data>
+    </node>
+    <node id="84098">
+      <data key="d0">15.4</data>
+    </node>
+    <node id="70490">
+      <data key="d0">11.2</data>
+    </node>
+    <node id="90080">
+      <data key="d0">10.8</data>
+    </node>
+    <node id="73737">
+      <data key="d0">43.9</data>
+    </node>
+  </graph>
+</graphml>
