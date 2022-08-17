@@ -32,6 +32,7 @@ dat$virus_species[dat$virus_species=="Middle_East_respiratory_syndrome_related_c
 #load and merge subfamily data 
 subfam <- read.csv(file = paste0(homewd, "/working-data/subfamily-merge.csv"), header = T, stringsAsFactors = F)
 head(subfam)
+subfam$virus_species[subfam$virus_species=="Middle_East_respiratory_syndrome_related_coronavirus"] <- "MERS_related_coronavirus"
 
 dat <- merge(dat, subfam, by = "virus_species")
 head(dat)
