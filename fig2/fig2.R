@@ -219,6 +219,9 @@ all.bat.df <- data.table::rbindlist(all.bat.sero)
 
 head(all.bat.df)
 
+#and save this 
+write.csv(all.bat.df, file = paste0(homewd, "/working-data/all_bat_exposures.csv"), row.names = F)
+
 length(unique(all.bat.df$rank[all.bat.df$bat_species=="Pteropus alecto"])) #77
 length(unique(all.bat.df$rank[all.bat.df$bat_species=="Eonycteris spelaea"])) #5
 
