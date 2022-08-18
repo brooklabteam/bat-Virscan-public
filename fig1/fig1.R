@@ -291,10 +291,23 @@ fig1.list  <-  lapply(pa.list.bat, plot.heat, all.bat=sort(unique(pa.dat$rank)),
 fig1 <- cowplot::plot_grid(plotlist = fig1.list, ncol = 3, align = "v", axis="lr", labels = c("A", "B", "C", "D", "E", "F"), label_size = 20, label_y = 1.01)    
 
 
+
 ggsave(file = paste0(homewd,"/final-figures/fig1.png"),
        plot=fig1,
        units="mm",  
        width=110, 
        height=60, 
        scale=4.5, 
+       dpi=300)
+
+
+#try flavi
+p.tmp <- plot.heat(pa.list$Flaviviridae, all.bat=sort(unique(pa.dat$rank)),  leg.name="Flaviviridae")
+
+ggsave(file = paste0(homewd,"/supp-figures/figFlavi.png"),
+       plot=p.tmp,
+       units="mm",  
+       width=60, 
+       height=60, 
+       scale=7, 
        dpi=300)
