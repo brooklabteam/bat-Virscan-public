@@ -51,9 +51,13 @@ subfam$virus_species[subfam$virus_species=="Middle_East_respiratory_syndrome_rel
 dat <- merge(dat, subfam, by = "virus_species")
 head(dat)
 
+dat$Age_tooth[dat$Age_cat=="Juvenile"] <- 0
 
 length(unique(dat$ID[dat$Species=="Pteropus alecto"])) #77 P. alecto. Some are missing ()
 length(unique(dat$ID[dat$Species=="Eonycteris spelaea"])) #5
+
+
+dat$Age_cat[dat$Age_cat=="Mature Adult"] <- "Adult"
 
 #load the metadata here to check that the merge was correct
 meta <- read.csv(file = paste0(homewd, "/working-data/bat_metadata.csv"), header = T, stringsAsFactors = F)
@@ -68,6 +72,47 @@ meta$ID[meta$ID=="Pa batch 1"] <- "Pa1"
 
 meta <- meta[meta$Run.ID!="",] #95 bats. so there are 11 bats (two Pa1s) for which we are lacking phip-seq data
 
+head(dat)
+head(meta)
+
+meta$Age_cat[meta$Age_cat=="Mature Adult"] <- "Adult"
+meta$Age_cat[meta$Age_cat=="Sub adult"] <- "Sub Adult"
+meta$Age_cat <- factor(meta$Age_cat, levels=rev(c("Juvenile", "Sub Adult", "Adult")))
+ggplot(data=subset(meta, Species=="Pteropus alecto" & !is.na(Age_cat))) + geom_point(aes(x=Forearm_mm, y=Mass_g, color=Age_cat, shape=Sex)) + facet_grid(Age_cat~.)
+
+#fit separate regression to adult and sub-adult data to get residuals
+m1 <- lm(Mass_g~Forearm_mm, data=subset(meta, Age_cat=="Adult" & Species=="Pteropus alecto"))
+summary(m1)
+
+m2 <- lm(Mass_g~Forearm_mm, data=subset(meta, Age_cat=="Sub Adult"& Species=="Pteropus alecto"))
+summary(m2)
+
+#and add prediction to the dataset
+meta$predicted_mass_g <- NA
+meta$predicted_mass_g[meta$Age_cat=="Adult" &!is.na(meta$Mass_g) & meta$Species=="Pteropus alecto"] <- predict(m1)
+meta$predicted_mass_g[meta$Age_cat=="Sub Adult" &!is.na(meta$Mass_g)& meta$Species=="Pteropus alecto"] <- predict(m2)
+
+
+
+#and plot
+# This can be supplementary FigS3 of the paper
+FigS3 <- ggplot(data=subset(meta, !is.na(Age_cat) & Age_cat!="Juvenile" & Species=="Pteropus alecto")) + 
+  geom_point(aes(x=Forearm_mm, y=Mass_g, color=Age_cat, shape=Sex)) +
+  facet_grid(Age_cat~.) + ylab("mass (g)") + xlab("forearm (mm)") +
+  geom_line(aes(x=Forearm_mm, y=predicted_mass_g)) + theme_bw() +
+  theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"))
+
+ggsave(file = paste0(homewd,"/supp-figures/figS3.png"),
+       plot=FigS3,
+       units="mm",  
+       width=50, 
+       height=60, 
+       scale=2.8, 
+       dpi=300)
+
+
+#now calculate the residuals
+meta$mass_residuals <- meta$Mass_g-meta$predicted_mass_g
 
 setdiff(unique(dat$ID), unique(meta$ID)) #none. all phipseq outputs are represented in the metadata
 setdiff(unique(meta$ID), unique(dat$ID)) 
@@ -75,7 +120,14 @@ setdiff(unique(meta$ID), unique(dat$ID))
 # we are missing phip-seq data for these bats
 #"Pa29"  "Pa50"  "Pa59"  "Pa77"  "Pa81"  "Pa10"  "Pa100" "Pa101" "Pa1"   "Pa2"   "Pa3"  
 
+#want to merge in the body condition scores
+names(meta)
+meta.merge <- dplyr::select(meta, ID, Sex, Age_cat, Age_scale, Condition, Mass_g, Forearm_mm, mass_residuals)
 
+names(dat)
+dat <- dplyr::select(dat, -(MF_resid), -(Sex), -(Age_cat), -(Mass), -(Forearm), -(Age_tooth))
+dat <- merge(dat, meta.merge, by="ID", all.x = T)
+head(dat)
 dat <- arrange(dat, virus_subfamily, virus_genus, virus_species)
 dat$virus_species <- factor(dat$virus_species, levels=unique(dat$virus_species))
 head(dat)
@@ -118,7 +170,7 @@ length(unique(dat$virus_subfamily)) #47 subfamilies with nested colors within th
 # include a supplementary figure that is focused on just one or two viral families (maybe just paramyxoviruses)
 es.dat = subset(dat, Species=="Eonycteris spelaea") # why are the assigned counts so few here?
 head(es.dat) # it appears that the column names are shifted to the right on these guys about halfway through
-names(es.dat)[17:22] <- c("X", "Assigned.counts", "Assigned.peptides", "Total.sample.hits", "Total.filtered.sample.hits", "virus_subfamily")
+names(es.dat)[11:23] <- c("X", "Assigned.counts", "Assigned.peptides", "Total.sample.hits", "Total.filtered.sample.hits", "virus_subfamily", "Sex", "Age_cat", "Age_scale", "Condition","Mass_g", "Forearm_mm",  "mass_residuals")
 es.dat <- dplyr::select(es.dat, -(X))
 head(es.dat)
 pa.dat = subset(dat, Species=="Pteropus alecto")
@@ -140,11 +192,10 @@ all.dat <- rbind(pa.dat, es.dat)
 rank.bat = cbind.data.frame(ID = unique(all.dat$ID), rank = seq(1, length(unique(all.dat$ID))))
 all.dat <- merge(all.dat, rank.bat, by="ID")
 
-# rank.bat = cbind.data.frame(ID = unique(pa.dat$ID), rank = seq(1, length(unique(pa.dat$ID))))
-# pa.dat <- merge(pa.dat, rank.bat, by="ID")
-# 
-# rank.bat2 = cbind.data.frame(ID = unique(es.dat$ID), rank = seq(1, length(unique(es.dat$ID))))
-# es.dat <- merge(es.dat, rank.bat2, by="ID")
+names(all.dat)[16:21] <- c("sex", "age_cat", "age_tooth", "condition", "mass_g", "forearm_mm")
+head(all.dat)
+#all.dat$Age_tooth[all.dat$Age_cat=="Juvenile"] <- 0
+#plot body condition by number of peptides
 
 
 ########################################################################
@@ -219,7 +270,28 @@ all.bat.df <- data.table::rbindlist(all.bat.sero)
 
 head(all.bat.df)
 
-#and save this 
+#and bind the total hits by bat id
+head(all.dat)
+dat.add <- dplyr::select(all.dat, ID, sex, age_cat, age_tooth, condition,  mass_g, forearm_mm, mass_residuals, Total.sample.hits, Total.filtered.sample.hits)
+names(dat.add) <- c("ID", "sex", "age_cat", "age_tooth", "condition", "mass_g", "forearm_mm", "mass_residuals", "tot_hits", "tot_filter_hits")
+dat.add <- dat.add[!duplicated(dat.add),]
+all.bat.df <- merge(all.bat.df, dat.add, by="ID", all.x = T)
+head(all.bat.df)
+
+#check and clean as needed
+unique(all.bat.df$age_cat)
+unique(all.bat.df$condition)
+all.bat.df$age_tooth[all.bat.df$age_cat=="Juvenile"] #one juvenile bat is scored as age 3
+all.bat.df[all.bat.df$age_cat=="Juvenile",] 
+#he has forearm == 145. this is erroneous. 
+#we are going to reclass him as 1 year like all the other juveniles, as well as the juvenile who is labelled as NA for age
+all.bat.df$age_tooth[all.bat.df$ID=="Pa96"] <- 1
+all.bat.df$age_tooth[all.bat.df$ID=="Pa37"] <- 1
+
+head(all.bat.df)
+
+
+#and save this - for use in Fig 3 and 4
 write.csv(all.bat.df, file = paste0(homewd, "/working-data/all_bat_exposures.csv"), row.names = F)
 
 length(unique(all.bat.df$rank[all.bat.df$bat_species=="Pteropus alecto"])) #77
@@ -289,26 +361,27 @@ es.genus$cat <- "virus genus"
 Fig2a <- ggplot(data=pa.family) + geom_bar(aes(x=virus_family, y=seroprev, fill=virus_family), stat="identity", position = "dodge") + facet_grid(~cat)+
   theme_bw() +  theme(legend.title = element_blank(), legend.text =element_text(size=7), strip.background = element_rect(fill="white"), strip.placement = "outside",
                       plot.margin = unit(c(.2,.8,.1,.2), "cm"),
-                      panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=8, vjust=-2,  color="black"), strip.text = element_text(size=14),
-                      axis.text.y=element_text(size=12,color="black"),axis.title.y=element_text(size=14),axis.title.x=element_text(size=14))+
+                      panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=9, vjust=-2,  color="black"), strip.text = element_text(size=16),
+                      axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
   labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)#+scale_fill_manual(values=cols1) 
 
 
 Fig2b <- ggplot(data=pa.subfamily) + geom_bar(aes(x=virus_subfamily, y=seroprev, fill=virus_subfamily), stat="identity", position = "dodge")  + facet_grid(~cat)+
   theme_bw() +  theme(legend.title = element_blank(), legend.text =element_text(size=7),  strip.background = element_rect(fill="white"), strip.placement = "outside",
-                      panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=8, vjust=-2,  color="black"), strip.text = element_text(size=14),
+                      panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=9, vjust=-2,  color="black"), strip.text = element_text(size=14),
                       plot.margin = unit(c(.2,.8,.1,.2), "cm"),
-                      axis.text.y=element_text(size=12,color="black"),axis.title.y=element_text(size=14),axis.title.x=element_text(size=14))+
+                      axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
   labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)#+scale_fill_manual(values=cols1) 
 
 Fig2c <- ggplot(data=pa.genus) + geom_bar(aes(x=virus_genus, y=seroprev, fill=virus_genus), stat="identity", position = "dodge")  + facet_grid(~cat)+
   theme_bw() +  theme(legend.title = element_blank(), legend.text =element_text(size=7), strip.background = element_rect(fill="white"), strip.placement = "outside",
-                      panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=8, vjust=-2,  color="black"), strip.text = element_text(size=14),
+                      panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=9, vjust=-2,  color="black"), strip.text = element_text(size=16),
                       plot.margin = unit(c(.2,.8,.1,.2), "cm"),
-                      axis.text.y=element_text(size=12,color="black"),axis.title.y=element_text(size=14),axis.title.x=element_text(size=14))+
+                      axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
   labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)#+scale_fill_manual(values=cols1) 
 
 Fig2abc <- cowplot::plot_grid(Fig2a, Fig2b, Fig2c, ncol=1, nrow=3, labels = c("A", "B", "C"), label_size = 20)
+Fig2ab <- cowplot::plot_grid(Fig2a, Fig2c,ncol=1, nrow=2, labels = c("A", "B"), label_size = 20)
 
 
 #and compare average virus exposures per bat
@@ -370,17 +443,19 @@ sum.dat <- ddply(bat.ID.sum, .(species), summarise, mean=mean(N_exposures), medi
 
 #and plot
 Fig2def <- cowplot::plot_grid(Fig2d3, Fig2d1, ncol=1, nrow=3, labels = c("D", "E"), label_size = 20)
+Fig2cd <- cowplot::plot_grid(Fig2d3, Fig2d1, ncol=1, nrow=2, labels = c("C", "D"), label_size = 20)
 
 
 
 Fig2 <- cowplot::plot_grid(Fig2abc, Fig2def , ncol=2, nrow=1, rel_widths = c(1,.6))
+Fig2 <- cowplot::plot_grid(Fig2ab, Fig2cd , ncol=2, nrow=1, rel_widths = c(1,.6))
 
 
 ggsave(file = paste0(homewd,"/final-figures/fig2.png"),
        plot=Fig2,
        units="mm",  
        width=90, 
-       height=90, 
+       height=70, 
        scale=4.5, 
        dpi=300)
 
@@ -398,7 +473,3 @@ ggsave(file = paste0(homewd,"/final-figures/fig2box.png"),
        dpi=300)
 
 
-
-########
-########
-# and repeat in the supplement for eonycteris
