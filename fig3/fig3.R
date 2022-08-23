@@ -188,14 +188,28 @@ Fig3c <- ggplot(plot.sub.df, aes(x=virus_genus, y=mass_residuals)) + theme_bw()+
 # We ask: is poor body condition associated with positive serostatus?
 # And is this relationship different for different viruses? 
 
-m2 <-  glm(serostatus_num~mass_residuals:virus_genus, family = "binomial", data = plot.dat)
+#skipping version here with no random effects
+#m2 <-  glm(serostatus_num~mass_residuals:virus_genus, family = "binomial", data = plot.dat)
+#summary(m2)
+
+# version here with random effects
+# need the nAGQ=0 to avoid convergence issues.
+# This was fine, but we appear to have lost the confidence
+# intervals on the interaction terms
+library(lme4)
+m2 <- glmer(serostatus_num~ mass_residuals:virus_genus + (1|ID), nAGQ=0, family="binomial", plot.dat)
 summary(m2)
+
+
 # Note that we also tried including age (tooth) in this analysis but it was not 
 # significant, so we ultimately just investigated the interaction of virus genus 
 # and mass residual
 
-#visualize quickly
+#visualize interactions quickly
 plot_model(m2, "int")
+
+#and the random effects
+plot_model(m2, "re")
 
 #and extract important features
 int.dat <- plot_model(m2, "int")$data
@@ -203,10 +217,11 @@ int.dat <- plot_model(m2, "int")$data
 int.df <- cbind.data.frame(int.dat)
 head(int.df)
 
+
 #Also for the Supp Matt, plot it all
 FigS5 <- ggplot(data=int.df) + 
          geom_line(aes(x=x, y=predicted, color=group), show.legend = F)+
-         geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.3, show.legend = F)+
+         #geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.3, show.legend = F)+
          facet_wrap(group~.) + ylab("serostatus") + xlab("mass : forearm residuals") +
          scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
          coord_cartesian(ylim=c(0,1.1)) + theme_bw() + 
@@ -234,6 +249,7 @@ sub.df = subset(int.df, group == "Alphavirus"| group =="Avulavirus" |
                   group == "Orthopoxvirus"| group == "Flavivirus" | group =="Lyssavirus" )
 
 
+# @ Emily, not sure if you can find a way to get the confidence intervals back...?
 Fig3d <- ggplot(data=sub.df) + theme_bw() +
   theme(panel.grid = element_blank(), legend.title = element_blank(),
         legend.position = "bottom",legend.background = element_rect(color="black"),
@@ -243,8 +259,8 @@ Fig3d <- ggplot(data=sub.df) + theme_bw() +
   geom_line(aes(x=x, y=predicted, color=group))+
   ylab("serostatus") + xlab("mass : forearm residual") +
   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
-  coord_cartesian(ylim=c(0,1.1)) +
-  geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)#+
+  coord_cartesian(ylim=c(0,1.1)) #+
+  #geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)#+
   #facet_grid(~facet) 
 
 
