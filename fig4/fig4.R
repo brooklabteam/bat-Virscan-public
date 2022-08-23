@@ -158,7 +158,7 @@ dat.sero <- data.table::rbindlist(dat.split.sero)
 head(dat.sero)
 
 
-FigS5 <- ggplot(data = dat.sero) + theme_bw() +
+FigS7 <- ggplot(data = dat.sero) + theme_bw() +
   theme(panel.grid = element_blank(), axis.title = element_text(size=16),
         axis.text = element_text(size=14), strip.text = element_text(size=12),
         legend.position = c(.8,.04), legend.direction = "horizontal")+
@@ -170,8 +170,8 @@ FigS5 <- ggplot(data = dat.sero) + theme_bw() +
 
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS5.png"),
-       plot=FigS5,
+ggsave(file = paste0(homewd,"/supp-figures/figS7.png"),
+       plot=FigS7,
        units="mm",  
        width=100, 
        height=70, 
