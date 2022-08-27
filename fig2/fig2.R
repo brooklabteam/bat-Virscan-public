@@ -11,6 +11,8 @@ library(pheatmap)
 library(ggh4x)
 library(metafolio)
 library(RColorBrewer)
+library(paletteer)
+
 
 #for fig2, report the seroprevalence of all viruses based on these rules:
 
@@ -164,7 +166,7 @@ dat$virus_species <- sub("_", " ", dat$virus_species)
 dat$virus_species <- sub("_", " ", dat$virus_species)
 
 
-length(unique(dat$virus_subfamily)) #47 subfamilies with nested colors within them
+length(unique(dat$virus_subfamily)) #44 subfamilies with nested colors within them
 
 # first, for figure 1, plot a heatmap and compare broad viral exposures for the two species
 # include a supplementary figure that is focused on just one or two viral families (maybe just paramyxoviruses)
@@ -384,6 +386,132 @@ Fig2abc <- cowplot::plot_grid(Fig2a, Fig2b, Fig2c, ncol=1, nrow=3, labels = c("A
 Fig2ab <- cowplot::plot_grid(Fig2a, Fig2c,ncol=1, nrow=2, labels = c("A", "B"), label_size = 20)
 
 
+# make color ramp to nest the genera within the subfamily
+# should just be able to order them and assign a color ramp
+
+# first, get a data table of just the virus families and their genera
+pa.df1 <- dplyr::select(pa.family, virus_family)
+pa.df2 <- dplyr::select(pa.genus, virus_family)
+pa.sum <- ddply(pa.genus, .(virus_family, virus_genus), summarise)
+head(pa.sum)
+pa.sum$virus_genus <- as.character(pa.sum$virus_genus)
+pa.sum$virus_family <- as.character(pa.sum$virus_family)
+
+# are there families not captured here?
+
+setdiff(unique(pa.sum$virus_family), unique(pa.family$virus_family))
+setdiff(unique(pa.family$virus_family), unique(pa.sum$virus_family)) 
+#"Astroviridae" - needs to be added at the end
+
+pa.add <- c("Astroviridae", NA)
+pa.sum <-rbind(pa.sum, pa.add)
+
+# split by family
+pa.split <- dlply(pa.sum, .(virus_family))
+
+# and make a list of palettes in R that can be subsampled
+# add in a few that you made on your own
+col.pals <- as.list(rep(c("Blues", "Reds", "Purples", "Oranges", "Greens", "Greys", "Turquoises", "LightPinks", "Yellows", "Seagreens", "Magentas", "Cyans", "Chartreuses", "SlateBlues"), length.out=length(pa.split)))
+
+# within, each family, collapse into a vector with family name
+# first (only once), followed by the names of different genera
+nested.colors <- function(df, col.pal){
+  
+  fam.name = unique(df$virus_family)
+  #print(fam.name)
+  gen.names = c(df$virus_genus)
+  ordered.vector <- c(fam.name, gen.names)
+  ordered.vector <- ordered.vector[!is.na(ordered.vector)]
+  
+  #if(length(ordered.vector)>2){
+   # colorz = rev(brewer.pal(n=length(ordered.vector), name = col.pal))  
+  #}else{
+  brewer.palettes <- c("Blues", "Reds", "Purples", "Oranges", "Greens", "Greys")
+  brewer.pal = brewer.palettes[brewer.palettes==col.pal]
+  if (length(brewer.pal)>0){
+    colorz = rev(brewer.pal(n=4, name = col.pal))  
+    colorz <- colorz[1:length(ordered.vector)]
+  }else{
+    #here are the manual color palettes
+    LightPinks <- rev(c("lightpink", "lightpink1", "lightpink2", "lightpink3"))
+    Yellows <- rev(c("yellow1", "yellow2", "yellow3", "yellow4"))
+    Seagreens <- rev(c("seagreen1", "seagreen2", "seagreen3", "seagreen4"))
+    Turquoises <- rev(c("turquoise1", "turquoise2", "turquoise3", "turquoise4"))
+    Magentas <- rev(c("violetred1", "violetred2", "violetred3", "violetred4"))
+    Cyans <- rev(c("cyan1", "cyan2", "cyan3", "cyan4"))
+    Chartreuses <- rev(c("chartreuse1", "chartreuse2", "chartreuse3", "chartreuse4"))
+    SlateBlues <- rev(c("slateblue1", "slateblue2", "slateblue3", "slateblue4"))
+    
+    palette.list <- list(LightPinks, Yellows, Seagreens, Turquoises, Magentas, Cyans, Chartreuses, SlateBlues)
+    names(palette.list) <- c("LightPinks",  "Yellows", "Seagreens", "Turquoises", "Magentas", "Cyans", "Chartreuses", "SlateBlues")
+    palette = palette.list[[col.pal]]
+    
+    colorz <- palette[1:length(ordered.vector)]
+    
+  }
+    
+  #}
+  
+  names(colorz) <- ordered.vector
+  
+  
+  
+  return(colorz)
+}
+
+# or you can use this function to give the same color to the genera and families:
+same.nested.colors <- function(df, col.pal.num){
+  
+  fam.name = unique(df$virus_family)
+  #print(fam.name)
+  gen.names = c(df$virus_genus)
+  ordered.vector <- c(fam.name, gen.names)
+  ordered.vector <- ordered.vector[!is.na(ordered.vector)]
+  
+  all.colors = paletteer_c("grDevices::rainbow", 33)
+  
+  
+  colorz <- rep(all.colors[col.pal.num], length(ordered.vector))
+  
+  names(colorz) <- ordered.vector  
+ 
+  return(colorz)
+}
+
+#here's the output with nested colors - you could add more manual palettes
+pa.out <- mapply(nested.colors, df=pa.split, col.pal=col.pals, SIMPLIFY = FALSE)
+
+#and here's the one for the same colors
+pa.out <- mapply(same.nested.colors, df=pa.split, col.pal.num=as.list(1:33), SIMPLIFY = FALSE)
+names(pa.out) <- c()
+colorz <- c(unlist(pa.out))
+
+# now you have a vector of colors in rank order, named by 
+# nested virus family and genera
+
+# rerun the plots (leaving off the subfamily plot)
+
+# first, virus family:
+Fig2a <- ggplot(data=pa.family) + geom_bar(aes(x=virus_family, y=seroprev, fill=virus_family), stat="identity", position = "dodge") + facet_grid(~cat)+
+  theme_bw() +  theme(legend.title = element_blank(), legend.text =element_text(size=7), strip.background = element_rect(fill="white"), strip.placement = "outside",
+                      plot.margin = unit(c(.2,.8,.1,.2), "cm"),
+                      panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=9, vjust=-2,  color="black"), strip.text = element_text(size=16),
+                      axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
+  scale_fill_manual(values=colorz) +
+  labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)#+scale_fill_manual(values=cols1) 
+
+#then, go straight to genera:
+Fig2b <- ggplot(data=pa.genus) + geom_bar(aes(x=virus_genus, y=seroprev, fill=virus_genus), stat="identity", position = "dodge")  + facet_grid(~cat)+
+  theme_bw() +  theme(legend.title = element_blank(), legend.text =element_text(size=7), strip.background = element_rect(fill="white"), strip.placement = "outside",
+                      panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=9, vjust=-1,  color="black"), strip.text = element_text(size=16),
+                      plot.margin = unit(c(.2,.8,.1,.2), "cm"),
+                      axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
+  scale_fill_manual(values=colorz) +
+  labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)#+scale_fill_manual(values=cols1) 
+
+Fig2ab <- cowplot::plot_grid(Fig2a, Fig2b,ncol=1, nrow=2, labels = c("A", "B"), label_size = 20)
+
+
 #and compare average virus exposures per bat
 
 head(all.bat.df) # each line per ID is a different exposure
@@ -447,7 +575,7 @@ Fig2cd <- cowplot::plot_grid(Fig2d3, Fig2d1, ncol=1, nrow=2, labels = c("C", "D"
 
 
 
-Fig2 <- cowplot::plot_grid(Fig2abc, Fig2def , ncol=2, nrow=1, rel_widths = c(1,.6))
+#Fig2 <- cowplot::plot_grid(Fig2abc, Fig2def , ncol=2, nrow=1, rel_widths = c(1,.6))
 Fig2 <- cowplot::plot_grid(Fig2ab, Fig2cd , ncol=2, nrow=1, rel_widths = c(1,.6))
 
 
@@ -459,17 +587,17 @@ ggsave(file = paste0(homewd,"/final-figures/fig2.png"),
        scale=4.5, 
        dpi=300)
 
-#or the boxplot version
-
-Fig2def <- cowplot::plot_grid(Fig2d3, Fig2d2, ncol=1, nrow=3, labels = c("D", "E"), label_size = 20)
-
-Fig2 <- cowplot::plot_grid(Fig2abc, Fig2def , ncol=2, nrow=1, rel_widths = c(1,.6))
-ggsave(file = paste0(homewd,"/final-figures/fig2box.png"),
-       plot=Fig2,
-       units="mm",  
-       width=90, 
-       height=90, 
-       scale=4.5, 
-       dpi=300)
+# #or the boxplot version
+# 
+# Fig2def <- cowplot::plot_grid(Fig2d3, Fig2d2, ncol=1, nrow=3, labels = c("D", "E"), label_size = 20)
+# 
+# Fig2 <- cowplot::plot_grid(Fig2abc, Fig2def , ncol=2, nrow=1, rel_widths = c(1,.6))
+# ggsave(file = paste0(homewd,"/final-figures/fig2box.png"),
+#        plot=Fig2,
+#        units="mm",  
+#        width=90, 
+#        height=90, 
+#        scale=4.5, 
+#        dpi=300)
 
 
