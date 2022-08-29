@@ -15,7 +15,7 @@ library(sjPlot)
 
 
 #load the data
-homewd = "/Users/carabrook/Developer/bat-VirScan-public"
+homewd = "/Users/emilyruhs/Desktop/UChi_Brook_Lab/GitHub_repos/bat-VirScan-public"
 setwd(homewd)
 
 exp.dat <- read.csv(file = paste0(homewd, "/working-data/all_bat_exposures.csv"), header = T, stringsAsFactors = F)
@@ -101,6 +101,11 @@ Fig3a1 <- ggplot(data=dat.mass) + theme_bw() +
 
 m1 <- glm(mass_residuals ~ condition,data = dat.mass)
 summary(m1)
+# Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)          -85.12      31.83  -2.674  0.00985 ** 
+#   conditionFair         41.41      34.87   1.187  0.24018    
+# conditionGood         87.52      33.10   2.644  0.01065 *  
+#   conditionExcellent   250.00      42.11   5.936 2.04e-07 ***
 
 
 #is it supported statistically? (yes)
@@ -163,13 +168,13 @@ ggsave(file = paste0(homewd,"/supp-figures/figS4.png"),
 #                        virus_genus == "Orthopoxvirus"| virus_genus == "Flavivirus" | virus_genus =="Lyssavirus" )
 # 
 plot.sub.df = subset(plot.dat,virus_genus == "Alphavirus"| virus_genus =="Avulavirus" | 
-                       virus_genus == "Parechovirus" | virus_genus=="Betacoronavirus" | virus_genus == "Rotavirus" | 
-                       virus_genus == "Orthopoxvirus"| virus_genus == "Flavivirus" | virus_genus =="Lyssavirus" )
+                       virus_genus == "Orthohantavirus" | virus_genus=="Betacoronavirus" | virus_genus == "Rotavirus" | 
+                       virus_genus == "Orthopoxvirus"| virus_genus == "Influenzavirus_B" | virus_genus =="Lyssavirus" )
 
 
 
 plot.sub.df$interaction <- "negative slope"
-plot.sub.df$interaction[plot.sub.df$virus_genus=="Betacoronavirus" | plot.sub.df$virus_genus=="Flavivirus" | plot.sub.df$virus_genus=="Lyssavirus"] <- "positive slope"
+plot.sub.df$interaction[plot.sub.df$virus_genus=="Betacoronavirus" | plot.sub.df$virus_genus=="Orthohantavirus" | plot.sub.df$virus_genus=="Lyssavirus"] <- "positive slope"
 
 
 Fig3c <- ggplot(plot.sub.df, aes(x=virus_genus, y=mass_residuals)) + theme_bw()+
@@ -211,12 +216,18 @@ plot_model(m2, "int")
 #and the random effects
 plot_model(m2, "re")
 
+plot_model(m2, "pred", terms=c("mass_residuals", "virus_genus"))
+
 #and extract important features
-int.dat <- plot_model(m2, "int")$data
+int.dat <- plot_model(m2, "int", mdrt.values="minmax")$data
 
 int.df <- cbind.data.frame(int.dat)
 head(int.df)
 
+#test code for adding back in confidence intervals
+int.df$conf.low <- 0
+int.df$conf.high <- 0
+int.df$conf.low[int.df$group=="Alphavirus"] <- (int.df$predicted - (0.0032452))
 
 #Also for the Supp Matt, plot it all
 FigS5 <- ggplot(data=int.df) + 
@@ -245,8 +256,8 @@ ggsave(file = paste0(homewd,"/supp-figures/figS5.png"),
 #                   group == "Orthopoxvirus"| group == "Flavivirus" | group =="Lyssavirus" )
 
 sub.df = subset(int.df, group == "Alphavirus"| group =="Avulavirus" | 
-                  group == "Parechovirus" | group=="Betacoronavirus" | group == "Rotavirus" | 
-                  group == "Orthopoxvirus"| group == "Flavivirus" | group =="Lyssavirus" )
+                  group == "Orthohantavirus" | group=="Betacoronavirus" | group == "Rotavirus" | 
+                  group == "Orthopoxvirus"| group == "Influenzavirus_B" | group =="Lyssavirus" )
 
 
 # @ Emily, not sure if you can find a way to get the confidence intervals back...?
@@ -259,8 +270,9 @@ Fig3d <- ggplot(data=sub.df) + theme_bw() +
   geom_line(aes(x=x, y=predicted, color=group))+
   ylab("serostatus") + xlab("mass : forearm residual") +
   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
-  coord_cartesian(ylim=c(0,1.1)) #+
-  #geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)#+
+  coord_cartesian(ylim=c(0,1.1)) + geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
+
+#+
   #facet_grid(~facet) 
 
 
@@ -293,6 +305,18 @@ summary(m3) #nope
 # Age?
 m4 <- lm(log10(tot_hits)~age_tooth, data = ind.dat)
 summary(m4) # yes, weakly
+
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  2.48639    0.06142  40.484   <2e-16 ***
+#   age_tooth    0.02234    0.01228   1.819   0.0768 .  
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.2046 on 38 degrees of freedom
+# (37 observations deleted due to missingness)
+# Multiple R-squared:  0.08008,	Adjusted R-squared:  0.05587 
+# F-statistic: 3.308 on 1 and 38 DF,  p-value: 0.07683
 
 #gam shows the same curve
 #m4 <- gam(log10(tot_hits)~s(age_tooth, bs="tp"), data = ind.dat)
@@ -337,7 +361,9 @@ Fig3b <- ggplot(subset(ind.dat, !is.na(age_tooth))) +
 Fig3top<- cowplot::plot_grid(Fig3a, Fig3b, labels = c("A", "B"), label_size = 20, nrow=1, ncol=2)
 Fig3bottom <- cowplot::plot_grid(Fig3c, Fig3d, labels = c("C", "D"), label_size = 20, nrow=1, ncol=2)
 
+dev.new()
 Fig3 <- cowplot::plot_grid(Fig3top, Fig3bottom, ncol=1, nrow = 2, rel_heights = c(1,1.2))
+Fig3
 
 ggsave(file = paste0(homewd,"/final-figures/fig3.png"),
        plot=Fig3,
