@@ -15,7 +15,9 @@ library(sjPlot)
 
 
 #load the data
+#comment out when not for your system
 homewd = "/Users/emilyruhs/Desktop/UChi_Brook_Lab/GitHub_repos/bat-VirScan-public"
+homewd = "/Users/carabrook/Developer/bat-Virscan-public"
 setwd(homewd)
 
 exp.dat <- read.csv(file = paste0(homewd, "/working-data/all_bat_exposures.csv"), header = T, stringsAsFactors = F)
@@ -161,6 +163,7 @@ ggsave(file = paste0(homewd,"/supp-figures/figS4.png"),
 ## Pull out a subset for the main text
 
 
+
 #and Fig 3C side by side
 
 # plot.sub.df = subset(plot.dat, virus_genus =="Gammaretrovirus" | virus_genus == "Alphavirus"| virus_genus =="Avulavirus" | 
@@ -302,9 +305,19 @@ p1 <- ggplot(data=subset(ind.dat, !is.na(age_cat))) +
 m3 <- lm(log10(tot_hits)~mass_residuals, data = ind.dat)
 summary(m3) #nope
 
+
+m3alt <- glm(tot_hits~mass_residuals, data = ind.dat, family = "poisson")
+summary(m3alt) #yes. sig pos association. more hits with more positive residuals
+plot_model(m3alt, type="pred")
+
+
 # Age?
 m4 <- lm(log10(tot_hits)~age_tooth, data = ind.dat)
 summary(m4) # yes, weakly
+
+m4alt <- glm(tot_hits~age_tooth, data = ind.dat, family="poisson")
+summary(m4alt) # yes, positive, strongly
+plot_model(m4alt, type="pred")
 
 # Coefficients:
 #   Estimate Std. Error t value Pr(>|t|)    
@@ -329,10 +342,32 @@ summary(m5gam) #not sig
 m5lm <- lm(log10(N_exposures_scale)~age_tooth, data = ind.dat)
 summary(m5lm) #nope
 
+m5alt <- glm(N_exposures~age_tooth, data = ind.dat, family="poisson")
+summary(m5alt) #weak positive association
+plot_model(m5alt, type="pred")
+
 
 m6 <- lm(log10(N_exposures_scale)~mass_residuals, data = ind.dat)
 summary(m6) #nope
+m6alt <- glm(N_exposures~mass_residuals, data = ind.dat, family="poisson")
+summary(m6alt) # yes, negative slope
+plot_model(m6alt, type="pred") #fewer exposures in healthier bats
 
+
+#and look at both - this is the more correct way to do it!
+m7a <- glm(tot_hits~mass_residuals + age_tooth, data = ind.dat, family="poisson")
+summary(m7a) #both sig but mass resid negative now
+
+p1 <- plot_model(m7a, type="pred")$mass_residuals
+p2 <- plot_model(m7a, type="pred")$age_tooth
+
+m7b <- glm(N_exposures~mass_residuals + age_tooth, data = ind.dat, family="poisson")
+summary(m7b) #both sig. mirrors above
+
+p3 <-  plot_model(m7b, type="pred")$mass_residuals
+p4 <- plot_model(m7b, type="pred")$age_tooth
+
+cowplot::plot_grid(p2,p4,p2,p3, nrow=2, ncol=2)
 
 #include the first model in the plot
 ind.dat$predicted_hits <- ind.dat$predicted_hits_lci <- ind.dat$predicted_hits_uci <-NA
