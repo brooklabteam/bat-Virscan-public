@@ -95,8 +95,7 @@ dat.mass <- subset(dat.mass, !is.na(condition))
 #great support that mass residuals actually tell us something about body condition
 Fig3a1 <- ggplot(data=dat.mass) + theme_bw() + 
       theme(panel.grid = element_blank(), axis.title = element_text(size=14), axis.text=element_text(size=12),
-            plot.margin = unit(c(.5,.1,2.2,.1), "cm")) +
-            #plot.margin = unit(c(.1,.1,.1,.1), "cm")) +
+            plot.margin = unit(c(.1,.1,.1,.1), "cm")) +
       geom_boxplot(aes(x=condition, y=mass_residuals, color=condition), show.legend = F) +
       geom_jitter(aes(x=condition, y=mass_residuals, color=condition), width = .1, show.legend = F) +
       geom_hline(aes(yintercept=0), linetype=2) + ylab("mass : forearm residuals") + xlab("bat body condition")
@@ -181,7 +180,7 @@ plot.sub.df$interaction <- "negative slope"
 plot.sub.df$interaction[plot.sub.df$virus_genus=="Betacoronavirus" | plot.sub.df$virus_genus=="Orthohantavirus" | plot.sub.df$virus_genus=="Lyssavirus"] <- "positive slope"
 
 
-Fig3b <- ggplot(plot.sub.df, aes(x=virus_genus, y=mass_residuals)) + theme_bw()+
+Fig3c <- ggplot(plot.sub.df, aes(x=virus_genus, y=mass_residuals)) + theme_bw()+
   geom_violin(aes(fill=serostatus), 
               draw_quantiles = c(0,.25,.50,.75,1), show.legend = F) + 
   geom_hline(yintercept = 0, linetype=2) + ylab("mass : forearm residuals") +
@@ -259,63 +258,26 @@ ggsave(file = paste0(homewd,"/supp-figures/figS5.png"),
 #                   group == "Parechovirus" | group=="Betacoronavirus" | group == "Rotavirus" | 
 #                   group == "Orthopoxvirus"| group == "Flavivirus" | group =="Lyssavirus" )
 
-
 sub.df = subset(int.df, group == "Alphavirus"| group =="Avulavirus" | 
                   group == "Orthohantavirus" | group=="Betacoronavirus" | group == "Rotavirus" | 
                   group == "Orthopoxvirus"| group == "Influenzavirus_B" | group =="Lyssavirus" )
 
 
 # @ Emily, not sure if you can find a way to get the confidence intervals back...?
-Fig3cflip <- ggplot(data=sub.df) + theme_bw() +
+Fig3d <- ggplot(data=sub.df) + theme_bw() +
   theme(panel.grid = element_blank(), legend.title = element_blank(),
         legend.position = "bottom",legend.background = element_rect(color="black"),
         legend.direction = "horizontal",
         axis.title = element_text(size=16), axis.text = element_text(size=14),
         plot.margin = unit(c(.5,.1,.1,.1), "cm")) +
-  geom_line(aes(x=x, y=predicted, color=group))+ 
+  geom_line(aes(x=x, y=predicted, color=group))+
   ylab("serostatus") + xlab("mass : forearm residual") +
   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
-  coord_flip(ylim=c(0,1.1)) #+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
+  coord_cartesian(ylim=c(0,1.1)) + geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
 
-# @ Emily, not sure if you can find a way to get the confidence intervals back...?
-Fig3c <- ggplot(data=sub.df) + theme_bw() +
-  theme(panel.grid = element_blank(), legend.title = element_blank(),
-        legend.position = "bottom",legend.background = element_rect(color="black"),
-        legend.direction = "horizontal",
-        axis.title = element_text(size=16), axis.text = element_text(size=14),
-        plot.margin = unit(c(.5,.1,.1,.1), "cm")) +
-  geom_line(aes(x=x, y=predicted, color=group))+ 
-  ylab("serostatus") + xlab("mass : forearm residual") +
-  scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
-  coord_cartesian(ylim=c(0,1.1)) #+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
+#+
+  #facet_grid(~facet) 
 
-
-
-#and combine these together:
-
-Fig3flip <- cowplot::plot_grid(Fig3a, Fig3b, Fig3cflip, ncol=3, labels = c("A", "B", "C"), rel_widths = c(1,1.2,1), label_size = 22)
-
-ggsave(file = paste0(homewd,"/final-figures/fig3flip.png"),
-       plot=Fig3flip,
-       units="mm",  
-       width=150, 
-       height=50, 
-       scale=3, 
-       dpi=300)
-
-Fig3 <- cowplot::plot_grid(Fig3a, Fig3b, Fig3c, ncol=3, labels = c("A", "B", "C"), rel_widths = c(1,1.2,1), label_size = 22)
-
-ggsave(file = paste0(homewd,"/final-figures/fig3.png"),
-       plot=Fig3,
-       units="mm",  
-       width=150, 
-       height=50, 
-       scale=3, 
-       dpi=300)
-
-
-
-#and the new Fig 4 below
 
 ####################################################################################
 ####################################################################################
@@ -406,136 +368,69 @@ p3 <- plot_model(m7b, type="pred")$age_tooth
 cowplot::plot_grid(p1,p2,p3,p4, nrow=2, ncol=2)
 
 
-# And pull the data out and put into ggplot- this is the new figure 4.
+#and pull the data out - this is the new figure 34. these out 
 
-dat1 <- p1$data
-head(dat1)
-dat1$response <- "total peptide hits"
-dat1$pred <- "age"
-dat1$label <- "A"
+#include the first model in the plot
+ind.dat$predicted_hits <- ind.dat$predicted_hits_lci <- ind.dat$predicted_hits_uci <-NA
+ind.dat$predicted_hits[!is.na(ind.dat$age_tooth)] <- 10^predict(m4)
+ind.dat$predicted_hits_lci <- ind.dat$predicted_hits_uci <- NA
 
-dat1$label_x = 1
-dat1$label_y = 550
+ind.dat$predicted_hits_lci[!is.na(ind.dat$age_tooth)] <- 10^(predict(m4) -1.96*predict(m4, type = "response", se.fit = T)$se)
+ind.dat$predicted_hits_uci[!is.na(ind.dat$age_tooth)] <- 10^(predict(m4) +1.96*predict(m4, type = "response", se.fit = T)$se)
+# plotting shows us evidence of a weak association between
+# tot_hits and age
+max(ind.dat$tot_hits[!is.na(ind.dat$age_tooth)]) #872
 
-dat2 <- p2$data
-head(dat2)
-dat2$response <- "total peptide hits"
-dat2$pred <- "mass : forearm residuals"
-dat2$label <- "B"
-
-dat2$label_x = -140
-dat2$label_y = 550
-
-
-
-dat3 <- p3$data
-head(dat3)
-dat3$response <- "viral exposures"
-dat3$pred <- "age"
-dat3$label <- "C"
-
-dat3$label_x = 1
-dat3$label_y = 19
-
-dat4 <- p4$data
-head(dat4)
-dat4$response <-  "viral exposures"
-dat4$pred <- "mass : forearm residuals"
-dat4$label <- "D"
-dat4$label_x = -140
-dat4$label_y = 19
-
-# join the datasets
-combine.df <- rbind(dat1,dat2,dat3,dat4)
-head(combine.df)
+Fig3b <- ggplot(subset(ind.dat, !is.na(age_tooth))) + 
+  geom_point(aes(x=age_tooth, y=tot_hits, color=age_cat), size=3) +
+  geom_line(aes(x=age_tooth, y= predicted_hits)) +
+  geom_ribbon(aes(x=age_tooth, ymin= predicted_hits_lci,  ymax= predicted_hits_uci), alpha=.3) +
+  coord_cartesian(ylim=c(0,900), xlim=c(0,13)) + theme_bw() +
+  theme(panel.grid = element_blank(), axis.title = element_text(size=14), 
+        plot.margin = unit(c(.1,.1,.1,.1), "cm"),
+        axis.text = element_text(size=12), legend.position = c(.85,.15),
+        legend.title = element_blank(), legend.background = element_rect(color="black")) +
+  ylab("total peptide hits") + xlab("age (yrs, by teeth)")
 
 
 
-#plot with ggplot:
+Fig3top<- cowplot::plot_grid(Fig3a, Fig3b, labels = c("A", "B"), label_size = 20, nrow=1, ncol=2)
+Fig3bottom <- cowplot::plot_grid(Fig3c, Fig3d, labels = c("C", "D"), label_size = 20, nrow=1, ncol=2)
 
-Fig4 <- ggplot(data=combine.df) + 
-        geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high), alpha=.3) +
-        geom_line(aes(x=x, y=predicted)) + 
-        geom_label(aes(x=label_x, y=label_y, label=label), label.size = 0, size=6, fontface="bold") +
-        facet_grid(response~pred, scales="free", switch = "both") + theme_bw() +
-        theme(panel.grid = element_blank(), axis.title = element_blank(),
-              strip.background = element_blank(),
-              strip.text = element_text(size=14),
-              axis.text = element_text(size=12),
-              strip.placement = "outside")
+dev.new()
+Fig3 <- cowplot::plot_grid(Fig3top, Fig3bottom, ncol=1, nrow = 2, rel_heights = c(1,1.2))
+Fig3
 
-
-ggsave(file = paste0(homewd,"/final-figures/fig4.png"),
-       plot=Fig4,
+ggsave(file = paste0(homewd,"/final-figures/fig3.png"),
+       plot=Fig3,
        units="mm",  
-       width=70, 
-       height=60, 
+       width=90, 
+       height=80, 
        scale=3, 
        dpi=300)
 
-# 
-# 
-# #include the first model in the plot
-# ind.dat$predicted_hits <- ind.dat$predicted_hits_lci <- ind.dat$predicted_hits_uci <-NA
-# ind.dat$predicted_hits[!is.na(ind.dat$age_tooth)] <- 10^predict(m4)
-# ind.dat$predicted_hits_lci <- ind.dat$predicted_hits_uci <- NA
-# 
-# ind.dat$predicted_hits_lci[!is.na(ind.dat$age_tooth)] <- 10^(predict(m4) -1.96*predict(m4, type = "response", se.fit = T)$se)
-# ind.dat$predicted_hits_uci[!is.na(ind.dat$age_tooth)] <- 10^(predict(m4) +1.96*predict(m4, type = "response", se.fit = T)$se)
-# # plotting shows us evidence of a weak association between
-# # tot_hits and age
-# max(ind.dat$tot_hits[!is.na(ind.dat$age_tooth)]) #872
-# 
-# Fig3b <- ggplot(subset(ind.dat, !is.na(age_tooth))) + 
-#   geom_point(aes(x=age_tooth, y=tot_hits, color=age_cat), size=3) +
-#   geom_line(aes(x=age_tooth, y= predicted_hits)) +
-#   geom_ribbon(aes(x=age_tooth, ymin= predicted_hits_lci,  ymax= predicted_hits_uci), alpha=.3) +
-#   coord_cartesian(ylim=c(0,900), xlim=c(0,13)) + theme_bw() +
-#   theme(panel.grid = element_blank(), axis.title = element_text(size=14), 
-#         plot.margin = unit(c(.1,.1,.1,.1), "cm"),
-#         axis.text = element_text(size=12), legend.position = c(.85,.15),
-#         legend.title = element_blank(), legend.background = element_rect(color="black")) +
-#   ylab("total peptide hits") + xlab("age (yrs, by teeth)")
-# 
-# 
-# 
-# Fig3top<- cowplot::plot_grid(Fig3a, Fig3b, labels = c("A", "B"), label_size = 20, nrow=1, ncol=2)
-# Fig3bottom <- cowplot::plot_grid(Fig3c, Fig3d, labels = c("C", "D"), label_size = 20, nrow=1, ncol=2)
-# 
-# dev.new()
-# Fig3 <- cowplot::plot_grid(Fig3top, Fig3bottom, ncol=1, nrow = 2, rel_heights = c(1,1.2))
-# Fig3
-# 
-# ggsave(file = paste0(homewd,"/final-figures/fig3.png"),
-#        plot=Fig3,
-#        units="mm",  
-#        width=90, 
-#        height=80, 
-#        scale=3, 
-#        dpi=300)
-# 
-# 
-# #and, as supplementary:
-# 
-# max(ind.dat$N_exposures[!is.na(ind.dat$age_tooth)]) #35
-# 
-# FigS6 <- ggplot(subset(ind.dat, !is.na(age_tooth))) + 
-#   geom_point(aes(x=age_tooth, y=N_exposures, color=age_cat), size=3) +
-#   #geom_line(aes(x=age_tooth, y= predicted_hits)) +
-#   #geom_ribbon(aes(x=age_tooth, ymin= predicted_hits_lci,  ymax= predicted_hits_uci), alpha=.3) +
-#   coord_cartesian(ylim=c(0,40), xlim=c(0,13)) + theme_bw() +
-#   theme(panel.grid = element_blank(), axis.title = element_text(size=14), 
-#         plot.margin = unit(c(.1,.1,.1,.1), "cm"),
-#         axis.text = element_text(size=12), legend.position = c(.87,.15),
-#         legend.title = element_blank(), legend.background = element_rect(color="black")) +
-#   ylab("total exposures") + xlab("age (yrs, by teeth)")
-# 
-# 
-# 
-# ggsave(file = paste0(homewd,"/supp-figures/figS6.png"),
-#        plot=FigS6,
-#        units="mm",  
-#        width=50, 
-#        height=40, 
-#        scale=3, 
-#        dpi=300)
+
+#and, as supplementary:
+
+max(ind.dat$N_exposures[!is.na(ind.dat$age_tooth)]) #35
+
+FigS6 <- ggplot(subset(ind.dat, !is.na(age_tooth))) + 
+  geom_point(aes(x=age_tooth, y=N_exposures, color=age_cat), size=3) +
+  #geom_line(aes(x=age_tooth, y= predicted_hits)) +
+  #geom_ribbon(aes(x=age_tooth, ymin= predicted_hits_lci,  ymax= predicted_hits_uci), alpha=.3) +
+  coord_cartesian(ylim=c(0,40), xlim=c(0,13)) + theme_bw() +
+  theme(panel.grid = element_blank(), axis.title = element_text(size=14), 
+        plot.margin = unit(c(.1,.1,.1,.1), "cm"),
+        axis.text = element_text(size=12), legend.position = c(.87,.15),
+        legend.title = element_blank(), legend.background = element_rect(color="black")) +
+  ylab("total exposures") + xlab("age (yrs, by teeth)")
+
+
+
+ggsave(file = paste0(homewd,"/supp-figures/figS6.png"),
+       plot=FigS6,
+       units="mm",  
+       width=50, 
+       height=40, 
+       scale=3, 
+       dpi=300)

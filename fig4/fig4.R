@@ -11,10 +11,13 @@ library(pheatmap)
 library(ggh4x)
 library(metafolio)
 library(RColorBrewer)
+library(sjPlot)
 
 
-#load the data and make age-seroprevalence curves
-homewd = "/Users/carabrook/Developer/bat-VirScan-public"
+#load the data
+#comment out when not for your system
+homewd = "/Users/emilyruhs/Desktop/UChi_Brook_Lab/GitHub_repos/bat-VirScan-public"
+homewd = "/Users/carabrook/Developer/bat-Virscan-public"
 setwd(homewd)
 
 exp.dat <- read.csv(file = paste0(homewd, "/working-data/all_bat_exposures.csv"), header = T, stringsAsFactors = F)
@@ -38,7 +41,6 @@ head(sum.genus) #this matches Fig. 2
 
 dat=subset(exp.dat, bat_species=="Pteropus alecto")
 
-
 length(unique(dat$ID)) #77
 head(dat)
 
@@ -61,153 +63,247 @@ head(dat.wide)
 names(dat.wide)
 
 unique(unlist(dat.wide[,2:ncol(dat.wide)]))
-#which(dat.wide==2, arr.ind=TRUE) #all row 43
-#dat.wide[43,] #Pa6
-#subset(dat.long, ID=="Pa6") #oh! it has multiple entries for the same genera...
-#only going to count that as seropositive once
-#dat.wide[43,][dat.wide[43,]==2] <- 1
-#unique(unlist(dat.wide[,2:ncol(dat.wide)])) #just 1s and 0s now
 
 
 
 #now convert back to long
 dat.long <- melt(dat.wide)
 names(dat.long) <- c("ID", "virus_genus", "serostatus")
-nrow(dat.long) #
+nrow(dat.long) #462 = 77*6
 unique(dat.long$serostatus)
 
-
 #and merge with metadata
-exp.dat.merge <- exp.dat #dplyr::select(exp.dat, -(virus_genus))
-dat.all <- merge(dat.long, exp.dat.merge, by=c("ID", "virus_genus"), all.x = T)
+head(exp.dat)
+head(dat.long)
+merge.dat <- dplyr::select(exp.dat, -(virus_genus))
+dat.all <- merge(dat.long, merge.dat, by=c("ID"), all.x = T)
 head(dat.all)
 unique(dat.all$serostatus)
 
+#now get residuals
 unique(dat.all$age_cat)
 
-head(dat.all)
-
-#plot age-seroprevalence by boxplot
-unique(dat.all$age_cat)
-age.cat.prev <- ddply(subset(dat.all, !is.na(age_cat)), .(virus_genus, age_cat), summarise, N=sum(serostatus))
-age.cat.base<- ddply(subset(dat.all, !is.na(age_cat)), .(age_cat), summarise, Ntot =length(unique(ID)))
-
-age.cat.prev <- age.cat.prev[complete.cases(age.cat.prev),]
-age.cat.base <- age.cat.base[complete.cases(age.cat.base),]
+#check by condition
+unique(dat.all$condition)
+dat.all$condition <- factor(dat.all$condition, levels=c("Poor", "Fair", "Good", "Excellent"))
 
 
+# Finally, look at predictors of (a) number of hits (total peptide hits)
+# And (b) number of exposures
 
-age.cat.prev <- merge(age.cat.prev, age.cat.base, by="age_cat", all.x = T)
+# These should all be summarized by individual
 
-age.cat.prev$seroprevalence <- age.cat.prev$N/age.cat.prev$Ntot
+ind.dat <- ddply(dat.all, .(ID, rank, sex, condition, age_cat, age_tooth, mass_g, 
+                            forearm_mm, mass_residuals, tot_hits, tot_filter_hits), summarise, N_exposures=sum(serostatus))
+head(ind.dat)
+ind.dat$age_cat <- factor(ind.dat$age_cat, levels = c("Juvenile", "Sub Adult", "Adult"))
 
-age.cat.prev$age_cat <- factor(age.cat.prev$age_cat, levels=c("Juvenile", "Sub Adult", "Adult"))
-
-p1 <- ggplot(data = age.cat.prev) + 
-      geom_bar(aes(x=age_cat, y=seroprevalence), stat = "identity") +
-      facet_wrap(~virus_genus)
-
-p2 <- ggplot(data = age.cat.prev) + 
-  geom_point(aes(x=age_cat, y=seroprevalence, size=Ntot)) +
-  geom_line(aes(x=age_cat, y=seroprevalence, group=virus_genus)) +
-  facet_wrap(~virus_genus) + coord_cartesian(ylim=c(0,1))
-
-#betaCoV and Flavi are highest in juveniles -- this is what is known for CoVs in the literature
-
-unique(dat.all$age_tooth[dat.all$age_cat=="Juvenile"]) # NA,  1
-unique(dat.all$age_tooth[dat.all$age_cat=="Sub Adult"]) # NA, 2, 4, 3, 5, 1
-unique(dat.all$age_tooth[dat.all$age_cat=="Adult"]) # NA, 1-10
-
-#and plot by age bin
-#plot age-seroprevalence by boxplot
-unique(dat.all$age_tooth)
-
-dat.all$age_bin <- NA
-dat.all$age_bin[dat.all$age_tooth=="1"] <- 1
-dat.all$age_bin[dat.all$age_tooth==2 | dat.all$age_tooth==3] <- 2.5
-dat.all$age_bin[dat.all$age_tooth==4 | dat.all$age_tooth==5] <- 4.5
-dat.all$age_bin[dat.all$age_tooth==6 | dat.all$age_tooth==7] <- 6.5
-dat.all$age_bin[dat.all$age_tooth==8 | dat.all$age_tooth==9] <- 8.5
-dat.all$age_bin[dat.all$age_tooth==10 | dat.all$age_tooth==11] <- 10.5
-dat.all$age_bin[dat.all$age_tooth==12 | dat.all$age_tooth==13] <- 12.5
-
-dat.all <- subset(dat.all, !is.na(age_tooth)) #97 entries with age
-length(unique(dat.all$ID)) #39 aged bats at all
-
-#write function to get age-seroprevalence for each of the viruses
-#split by virus genus
-dat.split <- dlply(dat.all, .(virus_genus)) #39 genera
-
-get.age.seroprev <- function(df, df.all){
-  age.scale.base<- ddply(df.all, .(age_bin), summarise, N =length(unique(ID)))
-  age.scale.prev <- ddply(df, .(virus_genus, age_bin), summarise, Npos=sum(serostatus))
-  
-  age.sero = age.scale.base
-  
-  age.sero <- merge(age.sero, age.scale.prev, by="age_bin", all.x = T)
-  age.sero$virus_genus <- unique(df$virus_genus)
-  age.sero$Npos[is.na(age.sero$Npos)] <- 0
-  
-  age.sero$seroprevalence <- age.sero$Npos/age.sero$N
-  return(age.sero)
-}
-
-dat.split.sero <- lapply(dat.split, get.age.seroprev, df.all=dat.all)
-
-dat.sero <- data.table::rbindlist(dat.split.sero)
-head(dat.sero)
+# Age cat is merely pulled from tooth age:
+p1 <- ggplot(data=subset(ind.dat, !is.na(age_cat))) + 
+  geom_boxplot(aes(x=age_cat, y=age_tooth, fill=age_cat)) +
+  geom_jitter(aes(x=age_cat, y=age_tooth), width = .1)
+# Since tooth age is more quantitative, we'll use it as a predictor
 
 
-FigS7 <- ggplot(data = dat.sero) + theme_bw() +
-  theme(panel.grid = element_blank(), axis.title = element_text(size=16),
-        axis.text = element_text(size=14), strip.text = element_text(size=12),
-        legend.position = c(.8,.04), legend.direction = "horizontal")+
-  geom_point(aes(x=age_bin, y=seroprevalence, size=N)) + xlab("age (yrs)") +
-  ylab("seroprevalence\n") +
-  geom_line(aes(x=age_bin, y=seroprevalence, group=virus_genus)) +
-  facet_wrap(~virus_genus) + coord_cartesian(ylim=c(0,1), xlim=c(0,13)) +
-  scale_x_continuous(breaks=c(0,4,8,12))
+# What are the predictors of total hits?
+
+# This old stuff is incorrect -- skip over commented out
+# # Is mass residual a predictor?
+# m3 <- lm(log10(tot_hits)~mass_residuals, data = ind.dat)
+# summary(m3) #nope
+# 
+# 
+# # Age?
+# m4 <- lm(log10(tot_hits)~age_tooth, data = ind.dat)
+# summary(m4) # yes, weakly
+# 
+# m4alt <- glm(tot_hits~age_tooth, data = ind.dat, family="poisson")
+# summary(m4alt) # yes, positive, strongly
+# plot_model(m4alt, type="pred")
+
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  2.48639    0.06142  40.484   <2e-16 ***
+#   age_tooth    0.02234    0.01228   1.819   0.0768 .  
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.2046 on 38 degrees of freedom
+# (37 observations deleted due to missingness)
+# Multiple R-squared:  0.08008,	Adjusted R-squared:  0.05587 
+# F-statistic: 3.308 on 1 and 38 DF,  p-value: 0.07683
+
+#gam shows the same curve
+#m4 <- gam(log10(tot_hits)~s(age_tooth, bs="tp"), data = ind.dat)
+#summary(m4) # yes, weakly
+# 
+# ind.dat$N_exposures_scale <- ind.dat$N_exposures + 1
+# m5gam <- gam(log10(N_exposures_scale)~s(age_tooth, bs="tp"), data = ind.dat)
+# summary(m5gam) #not sig
+# 
+# m5lm <- lm(log10(N_exposures_scale)~age_tooth, data = ind.dat)
+# summary(m5lm) #nope
+# 
+# m5alt <- glm(N_exposures~age_tooth, data = ind.dat, family="poisson")
+# summary(m5alt) #weak positive association
+# plot_model(m5alt, type="pred")
+# 
+# 
+# m6 <- lm(log10(N_exposures_scale)~mass_residuals, data = ind.dat)
+# summary(m6) #nope
+# m6alt <- glm(N_exposures~mass_residuals, data = ind.dat, family="poisson")
+# summary(m6alt) # yes, negative slope
+# plot_model(m6alt, type="pred") #fewer exposures in healthier bats
+
+
+# Look at age and mass residuals together as predictors of total hits and 
+# overall viral exposures :
+
+m7a <- glm(tot_hits~mass_residuals + age_tooth, data = ind.dat, family="poisson")
+summary(m7a) #both sig but mass resid negative now
+
+p2 <- plot_model(m7a, type="pred")$mass_residuals
+p1 <- plot_model(m7a, type="pred")$age_tooth
+
+m7b <- glm(N_exposures~mass_residuals + age_tooth, data = ind.dat, family="poisson")
+summary(m7b) #both sig. mirrors above
+
+p4 <-  plot_model(m7b, type="pred")$mass_residuals
+p3 <- plot_model(m7b, type="pred")$age_tooth
+
+cowplot::plot_grid(p1,p2,p3,p4, nrow=2, ncol=2)
+
+
+# And pull the data out and put into ggplot- this is the new figure 4.
+
+dat1 <- p1$data
+head(dat1)
+dat1$response <- "total peptide hits"
+dat1$pred <- "age"
+dat1$label <- "A"
+
+dat1$label_x = 1
+dat1$label_y = 550
+
+dat2 <- p2$data
+head(dat2)
+dat2$response <- "total peptide hits"
+dat2$pred <- "mass : forearm residuals"
+dat2$label <- "B"
+
+dat2$label_x = -140
+dat2$label_y = 550
 
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS7.png"),
-       plot=FigS7,
-       units="mm",  
-       width=100, 
-       height=70, 
-       scale=3, 
-       dpi=300)
+dat3 <- p3$data
+head(dat3)
+dat3$response <- "viral exposures"
+dat3$pred <- "age"
+dat3$label <- "C"
+
+dat3$label_x = 1
+dat3$label_y = 19
+
+dat4 <- p4$data
+head(dat4)
+dat4$response <-  "viral exposures"
+dat4$pred <- "mass : forearm residuals"
+dat4$label <- "D"
+dat4$label_x = -140
+dat4$label_y = 19
+
+# join the datasets
+combine.df <- rbind(dat1,dat2,dat3,dat4)
+head(combine.df)
 
 
-#and just the ones of interest
-age.scale.plot = subset(dat.sero, 
-                          virus_genus=="Henipavirus" | virus_genus=="Marburgvirus"|
-                          virus_genus=="Betacoronavirus"| virus_genus=="Lyssavirus" | 
-                          virus_genus=="Flavivirus" | virus_genus=="Mastadenovirus")
 
+#plot with ggplot:
 
-Fig4 <- ggplot(data = age.scale.plot) + theme_bw() +
-  theme(panel.grid = element_blank(), axis.title = element_text(size=16),
-        axis.text = element_text(size=14), strip.text = element_text(size=12),
-        legend.position = c(.95,.87), legend.direction = "vertical", 
-        legend.background = element_rect(color="black"))+
-  geom_point(aes(x=age_bin, y=seroprevalence, size=N)) + xlab("age (yrs)") +
-  ylab("seroprevalence\n") +
-  geom_line(aes(x=age_bin, y=seroprevalence, group=virus_genus)) +
-  facet_wrap(~virus_genus) + coord_cartesian(ylim=c(0,1), xlim=c(0,13)) +
-  scale_x_continuous(breaks=c(0,4,8,12))
-
-#Fig4
+Fig4 <- ggplot(data=combine.df) + 
+  geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high), alpha=.3) +
+  geom_line(aes(x=x, y=predicted)) + 
+  geom_label(aes(x=label_x, y=label_y, label=label), label.size = 0, size=6, fontface="bold") +
+  facet_grid(response~pred, scales="free", switch = "both") + theme_bw() +
+  theme(panel.grid = element_blank(), axis.title = element_blank(),
+        strip.background = element_blank(),
+        strip.text = element_text(size=14),
+        axis.text = element_text(size=12),
+        strip.placement = "outside")
 
 
 ggsave(file = paste0(homewd,"/final-figures/fig4.png"),
        plot=Fig4,
        units="mm",  
-       width=90, 
+       width=70, 
        height=60, 
        scale=3, 
        dpi=300)
 
-#for model fitting... which genera have the most aged positives?
-dat.sero.sum <- ddply(dat.sero, .(virus_genus), summarise, totPos = sum(Npos))
-dat.sero.sum <- arrange(dat.sero.sum, desc(totPos)) #flavivirus and mastadenovirus
+# 
+# 
+# #include the first model in the plot
+# ind.dat$predicted_hits <- ind.dat$predicted_hits_lci <- ind.dat$predicted_hits_uci <-NA
+# ind.dat$predicted_hits[!is.na(ind.dat$age_tooth)] <- 10^predict(m4)
+# ind.dat$predicted_hits_lci <- ind.dat$predicted_hits_uci <- NA
+# 
+# ind.dat$predicted_hits_lci[!is.na(ind.dat$age_tooth)] <- 10^(predict(m4) -1.96*predict(m4, type = "response", se.fit = T)$se)
+# ind.dat$predicted_hits_uci[!is.na(ind.dat$age_tooth)] <- 10^(predict(m4) +1.96*predict(m4, type = "response", se.fit = T)$se)
+# # plotting shows us evidence of a weak association between
+# # tot_hits and age
+# max(ind.dat$tot_hits[!is.na(ind.dat$age_tooth)]) #872
+# 
+# Fig3b <- ggplot(subset(ind.dat, !is.na(age_tooth))) + 
+#   geom_point(aes(x=age_tooth, y=tot_hits, color=age_cat), size=3) +
+#   geom_line(aes(x=age_tooth, y= predicted_hits)) +
+#   geom_ribbon(aes(x=age_tooth, ymin= predicted_hits_lci,  ymax= predicted_hits_uci), alpha=.3) +
+#   coord_cartesian(ylim=c(0,900), xlim=c(0,13)) + theme_bw() +
+#   theme(panel.grid = element_blank(), axis.title = element_text(size=14), 
+#         plot.margin = unit(c(.1,.1,.1,.1), "cm"),
+#         axis.text = element_text(size=12), legend.position = c(.85,.15),
+#         legend.title = element_blank(), legend.background = element_rect(color="black")) +
+#   ylab("total peptide hits") + xlab("age (yrs, by teeth)")
+# 
+# 
+# 
+# Fig3top<- cowplot::plot_grid(Fig3a, Fig3b, labels = c("A", "B"), label_size = 20, nrow=1, ncol=2)
+# Fig3bottom <- cowplot::plot_grid(Fig3c, Fig3d, labels = c("C", "D"), label_size = 20, nrow=1, ncol=2)
+# 
+# dev.new()
+# Fig3 <- cowplot::plot_grid(Fig3top, Fig3bottom, ncol=1, nrow = 2, rel_heights = c(1,1.2))
+# Fig3
+# 
+# ggsave(file = paste0(homewd,"/final-figures/fig3.png"),
+#        plot=Fig3,
+#        units="mm",  
+#        width=90, 
+#        height=80, 
+#        scale=3, 
+#        dpi=300)
+# 
+# 
+# #and, as supplementary:
+# 
+# max(ind.dat$N_exposures[!is.na(ind.dat$age_tooth)]) #35
+# 
+# FigS6 <- ggplot(subset(ind.dat, !is.na(age_tooth))) + 
+#   geom_point(aes(x=age_tooth, y=N_exposures, color=age_cat), size=3) +
+#   #geom_line(aes(x=age_tooth, y= predicted_hits)) +
+#   #geom_ribbon(aes(x=age_tooth, ymin= predicted_hits_lci,  ymax= predicted_hits_uci), alpha=.3) +
+#   coord_cartesian(ylim=c(0,40), xlim=c(0,13)) + theme_bw() +
+#   theme(panel.grid = element_blank(), axis.title = element_text(size=14), 
+#         plot.margin = unit(c(.1,.1,.1,.1), "cm"),
+#         axis.text = element_text(size=12), legend.position = c(.87,.15),
+#         legend.title = element_blank(), legend.background = element_rect(color="black")) +
+#   ylab("total exposures") + xlab("age (yrs, by teeth)")
+# 
+# 
+# 
+# ggsave(file = paste0(homewd,"/supp-figures/figS6.png"),
+#        plot=FigS6,
+#        units="mm",  
+#        width=50, 
+#        height=40, 
+#        scale=3, 
+#        dpi=300)
