@@ -189,7 +189,7 @@ dat2 <- p2$data
 head(dat2)
 dat2$response <- "total peptide hits"
 dat2$pred <- "mass : forearm residuals"
-dat2$label <- "B"
+dat2$label <- "C"
 
 dat2$label_x = -140
 dat2$label_y = 550
@@ -200,7 +200,7 @@ dat3 <- p3$data
 head(dat3)
 dat3$response <- "viral exposures"
 dat3$pred <- "age"
-dat3$label <- "C"
+dat3$label <- "B"
 
 dat3$label_x = 1
 dat3$label_y = 19
