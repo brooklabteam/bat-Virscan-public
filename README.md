@@ -12,4 +12,4 @@ We reference these data in all subsequent figure development files.
 
 ## Repo
 
-This repo is organized by figure. Background scripts for generating datasets are found in the "prep-scripts" folder, while all code needed to produce analyses and generate plots for each figure are in the corresponding 'fig1', 'fig2', 'fig3', and 'fig4' subfolders. These folders output files into 'final-figures' and 'supp-figures' accordingly..
+This repo is organized by figure. Background scripts for generating datasets are found in the "prep-scripts" folder, while all code needed to produce analyses and generate plots for each figure are in the corresponding 'fig1', 'fig2', 'fig3', and 'fig4' subfolders. These folders output files into 'final-figures' and 'supp-figures' accordingly.
