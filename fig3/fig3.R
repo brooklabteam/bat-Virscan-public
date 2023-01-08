@@ -102,7 +102,7 @@ Fig3a1 <- ggplot(data=dat.mass) + theme_bw() +
       geom_hline(aes(yintercept=0), linetype=2) + ylab("mass : forearm residuals") + xlab("bat body condition")
 
 
-m1 <- glm(mass_residuals ~ condition,data = dat.mass)
+m1 <- lm(mass_residuals ~ condition,data = dat.mass)
 summary(m1)
 # Estimate Std. Error t value Pr(>|t|)    
 # (Intercept)          -85.12      31.83  -2.674  0.00985 ** 
@@ -141,6 +141,13 @@ plot.dat$ID <- as.factor(plot.dat$ID)
 
 ### First, for the SuppMat, plot all
 
+# add which were significant as stars
+plot.dat$sig_label <- ""
+plot.dat$sig_label[plot.dat$virus_genus=="Alphavirus"| plot.dat$virus_genus=="Enterovirus" | 
+                   plot.dat$virus_genus== "Gammaretrovirus" | plot.dat$virus_genus=="Influenzavirus_B" | plot.dat$virus_genus=="Mastadenovirus" | 
+                   plot.dat$virus_genus=="Orthopoxvirus"| plot.dat$virus_genus=="Rotavirus" | plot.dat$virus_genus=="Rubivirus"] <- "***"
+
+
 # plot all in the SuppMat
 FigS4 <- ggplot(data=plot.dat) + theme_bw()+
   theme(panel.grid = element_blank(), axis.title.x = element_blank(),
@@ -148,6 +155,7 @@ FigS4 <- ggplot(data=plot.dat) + theme_bw()+
         legend.background = element_rect(color="black")) +
   geom_violin(aes(x=serostatus, y=mass_residuals, fill=serostatus), 
               draw_quantiles = c(0,.25,.5,.75)) +
+  geom_label(aes(x=1.5, y=170, label=sig_label), size=5, label.size = 0) +
   geom_jitter(aes(x=serostatus, y=mass_residuals), width=.1, size=.1) +
   geom_hline(yintercept = 1, linetype=2) +
   facet_wrap(~virus_genus) + ylab("mass residuals")
@@ -160,37 +168,6 @@ ggsave(file = paste0(homewd,"/supp-figures/figS4.png"),
        scale=2.8, 
        dpi=300)
 
-
-## Pull out a subset for the main text
-
-
-
-#and Fig 3C side by side
-
-# plot.sub.df = subset(plot.dat, virus_genus =="Gammaretrovirus" | virus_genus == "Alphavirus"| virus_genus =="Avulavirus" | 
-#                        virus_genus == "Parechovirus" | virus_genus=="Betacoronavirus" | virus_genus == "Rotavirus" | 
-#                        virus_genus == "Orthopoxvirus"| virus_genus == "Flavivirus" | virus_genus =="Lyssavirus" )
-# 
-plot.sub.df = subset(plot.dat,virus_genus == "Alphavirus"| virus_genus =="Avulavirus" | 
-                       virus_genus == "Orthohantavirus" | virus_genus=="Betacoronavirus" | virus_genus == "Rotavirus" | 
-                       virus_genus == "Orthopoxvirus"| virus_genus == "Influenzavirus_B" | virus_genus =="Lyssavirus" )
-
-
-
-plot.sub.df$interaction <- "negative slope"
-plot.sub.df$interaction[plot.sub.df$virus_genus=="Betacoronavirus" | plot.sub.df$virus_genus=="Orthohantavirus" | plot.sub.df$virus_genus=="Lyssavirus"] <- "positive slope"
-
-
-Fig3b <- ggplot(plot.sub.df, aes(x=virus_genus, y=mass_residuals)) + theme_bw()+
-  geom_violin(aes(fill=serostatus), 
-              draw_quantiles = c(0,.25,.50,.75,1), show.legend = F) + 
-  geom_hline(yintercept = 0, linetype=2) + ylab("mass : forearm residuals") +
-  geom_point(aes(fill=serostatus), position = position_jitterdodge(), 
-             size=.2, show.legend = F) + facet_nested(~interaction, scales= "free", space = "free") +
-  theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"),
-        axis.title.x = element_blank(), axis.title.y = element_text(size=14), strip.text = element_text(size=14),
-        axis.text.y = element_text(size=12), axis.text.x = element_text(size=12, angle = 290, hjust = 0),
-        plot.margin = unit(c(.5,.1,.1,.1), "cm"))
 
 
 # Next, assess this relationship statistically
@@ -209,13 +186,63 @@ library(lme4)
 m2 <- glmer(serostatus_num~ mass_residuals:virus_genus + (1|ID), nAGQ=0, family="binomial", plot.dat)
 summary(m2)
 
+#now wdjust for multiple comparisons by bonferonni:
+adjusted.P <- p.adjust(summary(m2)$coefficients[,ncol(summary(m2)$coefficients)][-1], n= length(summary(m2)$coefficients[,ncol(summary(m2)$coefficients)][-1]))
+
+adjusted.P <- cbind.data.frame(virus=sort(as.character(unique(plot.dat$virus_genus))), estimate=round(summary(m2)$coefficients[,1][-1],2), raw_P=summary(m2)$coefficients[,ncol(summary(m2)$coefficients)][-1], adj_P=adjusted.P)
+rownames(adjusted.P) <- c()
+adjusted.P$isSigRaw <- "no"
+adjusted.P$isSigRaw[adjusted.P$raw_P<0.01] <- "yes"
+adjusted.P$isSigCorrect <- "no"
+adjusted.P$isSigCorrect[adjusted.P$adj_P<0.01] <- "yes"
+
+#and look at those that are significant
+subset(adjusted.P, isSigCorrect=="yes")
+
+## This is your subset for the main text
+
+#and Fig 3C side by side
+
+# plot.sub.df = subset(plot.dat, virus_genus =="Gammaretrovirus" | virus_genus == "Alphavirus"| virus_genus =="Avulavirus" | 
+#                        virus_genus == "Parechovirus" | virus_genus=="Betacoronavirus" | virus_genus == "Rotavirus" | 
+#                        virus_genus == "Orthopoxvirus"| virus_genus == "Flavivirus" | virus_genus =="Lyssavirus" )
+# 
+# plot.sub.df = subset(plot.dat,virus_genus == "Alphavirus"| virus_genus =="Avulavirus" | 
+#                        virus_genus == "Orthohantavirus" | virus_genus=="Betacoronavirus" | virus_genus == "Rotavirus" | 
+#                        virus_genus == "Orthopoxvirus"| virus_genus == "Influenzavirus_B" | virus_genus =="Lyssavirus" )
+
+
+plot.sub.df = subset(plot.dat,virus_genus == "Alphavirus"| virus_genus =="Enterovirus" | 
+                       virus_genus == "Gammaretrovirus" | virus_genus=="Influenzavirus_B" | virus_genus == "Mastadenovirus" | 
+                       virus_genus == "Orthopoxvirus"| virus_genus == "Rotavirus" | virus_genus =="Rubivirus" )
+
+
+
+plot.sub.df$interaction <- "negative slope"
+#plot.sub.df$interaction[plot.sub.df$virus_genus=="Betacoronavirus" | plot.sub.df$virus_genus=="Orthohantavirus" | plot.sub.df$virus_genus=="Lyssavirus"] <- "positive slope"
+plot.sub.df$interaction[plot.sub.df$virus_genus=="Enterovirus" | plot.sub.df$virus_genus=="Rubivirus"] <- "positive slope"
+
+
+Fig3b <- ggplot(plot.sub.df, aes(x=virus_genus, y=mass_residuals)) + theme_bw()+
+  geom_violin(aes(fill=serostatus), 
+              draw_quantiles = c(0,.25,.50,.75,1), show.legend = F) + 
+  geom_hline(yintercept = 0, linetype=2) + ylab("mass : forearm residuals") +
+  geom_point(aes(fill=serostatus), position = position_jitterdodge(), 
+             size=.2, show.legend = F) + ggh4x::facet_nested(~interaction, scales= "free", space = "free") +
+  theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"),
+        axis.title.x = element_blank(), axis.title.y = element_text(size=14), strip.text = element_text(size=14),
+        axis.text.y = element_text(size=12), axis.text.x = element_text(size=12, angle = 290, hjust = 0),
+        plot.margin = unit(c(.5,.1,.1,.1), "cm"))
+
+
 
 # Note that we also tried including age (tooth) in this analysis but it was not 
 # significant, so we ultimately just investigated the interaction of virus genus 
 # and mass residual
 
 #visualize interactions quickly
-plot_model(m2, "int")
+plot_model(m2, "int", mdrt.values="minmax")
+plot_model(m2, "int", mdrt.values="meansd")
 
 #and the random effects
 plot_model(m2, "re")
@@ -223,15 +250,24 @@ plot_model(m2, "re")
 plot_model(m2, "pred", terms=c("mass_residuals", "virus_genus"))
 
 #and extract important features
-int.dat <- plot_model(m2, "int", mdrt.values="minmax")$data
+int.dat <- plot_model(m2, "int", mdrt.values="meansd", ci.lvl = .9)$data
+int.dat <- plot_model(m2, "int")$data
 
 int.df <- cbind.data.frame(int.dat)
 head(int.df)
 
+#now add which were significant as stars
+int.df$sig_label <- ""
+int.df$sig_label[int.df$group=="Alphavirus"| int.df$group=="Enterovirus" | 
+                   int.df$group== "Gammaretrovirus" | int.df$group=="Influenzavirus_B" | int.df$group=="Mastadenovirus" | 
+                   int.df$group=="Orthopoxvirus"| int.df$group=="Rotavirus" | int.df$group=="Rubivirus"] <- "***"
+
+
+
 #test code for adding back in confidence intervals
 int.df$conf.low <- 0
 int.df$conf.high <- 0
-int.df$conf.low[int.df$group=="Alphavirus"] <- (int.df$predicted - (0.0032452))
+int.df$conf.low[int.df$group=="Alphavirus"] <- (int.df$predicted[int.df$group=="Alphavirus"] - (0.0032452))
 
 #Also for the Supp Matt, plot it all
 FigS5 <- ggplot(data=int.df) + 
@@ -240,6 +276,7 @@ FigS5 <- ggplot(data=int.df) +
          facet_wrap(group~.) + ylab("serostatus") + xlab("mass : forearm residuals") +
          scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
          coord_cartesian(ylim=c(0,1.1)) + theme_bw() + 
+         geom_label(aes(x=0,y=.85, label=sig_label), label.size = 0, size=5) +
          theme(panel.grid = element_blank(), strip.background = element_blank(), 
                strip.text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=9))
 
@@ -260,9 +297,15 @@ ggsave(file = paste0(homewd,"/supp-figures/figS5.png"),
 #                   group == "Orthopoxvirus"| group == "Flavivirus" | group =="Lyssavirus" )
 
 
-sub.df = subset(int.df, group == "Alphavirus"| group =="Avulavirus" | 
-                  group == "Orthohantavirus" | group=="Betacoronavirus" | group == "Rotavirus" | 
-                  group == "Orthopoxvirus"| group == "Influenzavirus_B" | group =="Lyssavirus" )
+
+sub.df = subset(int.df,group == "Alphavirus"| group =="Enterovirus" | 
+                       group == "Gammaretrovirus" | group=="Influenzavirus_B" | group == "Mastadenovirus" | 
+                       group == "Orthopoxvirus"| group == "Rotavirus" | group =="Rubivirus" )
+
+
+# sub.df = subset(int.df, group == "Alphavirus"| group =="Avulavirus" | 
+#                   group == "Orthohantavirus" | group=="Betacoronavirus" | group == "Rotavirus" | 
+#                   group == "Orthopoxvirus"| group == "Influenzavirus_B" | group =="Lyssavirus" )
 
 
 # @ Emily, not sure if you can find a way to get the confidence intervals back...?

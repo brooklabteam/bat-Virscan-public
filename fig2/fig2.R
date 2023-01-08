@@ -138,18 +138,6 @@ unique(dat$X) # these only have values on the eonycteris samples, where the colu
 # fix down below
 
 
-# and summarize the data to report in the paper
-length(unique(dat$virus_family[dat$Species=="Pteropus alecto"])) #33
-length(unique(dat$virus_subfamily[dat$Species=="Pteropus alecto"])) #47
-length(unique(dat$virus_genus[dat$Species=="Pteropus alecto"])) #82
-length(unique(dat$virus_species[dat$Species=="Pteropus alecto"])) #414
-
-
-length(unique(dat$virus_family[dat$Species=="Eonycteris spelaea"])) #12
-length(unique(dat$virus_subfamily[dat$Species=="Eonycteris spelaea"])) #15
-length(unique(dat$virus_genus[dat$Species=="Eonycteris spelaea"])) #23
-length(unique(dat$virus_species[dat$Species=="Eonycteris spelaea"])) #78
-
 sort(unique(dat$virus_genus))
 dat$virus_genus[dat$virus_genus=="unclassified_Paramyxoviridae"] <- "unc. Paramyxo"
 dat$virus_genus[dat$virus_genus=="unclassified_Anelloviridae"] <- "unc. Anello"
@@ -358,6 +346,28 @@ es.family$cat <- "virus family"
 es.subfamily$cat <- "virus subfamily"
 es.genus$cat <- "virus genus"
 
+#are there any families within the genus and subfamily datasets that are skipped?
+setdiff(unique(pa.genus$virus_family), unique(pa.family$virus_family)) #no
+setdiff(unique(pa.subfamily$virus_family), unique(pa.family$virus_family)) #no
+setdiff(unique(pa.genus$virus_subfamily), unique(pa.subfamily$virus_subfamily)) #no
+
+setdiff(unique(es.genus$virus_family), unique(es.family$virus_family)) #no
+setdiff(unique(es.subfamily$virus_family), unique(es.family$virus_family)) #no
+setdiff(unique(es.genus$virus_subfamily), unique(es.subfamily$virus_subfamily)) #no
+
+
+# and summarize the data to report in the paper
+length(unique(pa.family$virus_family)) #33
+length(unique(pa.subfamily$virus_subfamily)) #41
+length(unique(pa.genus$virus_genus)) #57
+
+
+length(unique(es.family$virus_family)) #12
+length(unique(es.subfamily$virus_subfamily)) #14
+length(unique(es.genus$virus_genus)) #9
+
+sort(as.character(unique(pa.genus$virus_genus)))
+
 ## ideally, would make nested color ramp with virus genus colors nested in virus subfamily and family colors
 
 Fig2a <- ggplot(data=pa.family) + geom_bar(aes(x=virus_family, y=seroprev, fill=virus_family), stat="identity", position = "dodge") + facet_grid(~cat)+
@@ -386,6 +396,7 @@ Fig2abc <- cowplot::plot_grid(Fig2a, Fig2b, Fig2c, ncol=1, nrow=3, labels = c("A
 Fig2ab <- cowplot::plot_grid(Fig2a, Fig2c,ncol=1, nrow=2, labels = c("A", "B"), label_size = 20)
 
 
+head(pa.genus)
 # make color ramp to nest the genera within the subfamily
 # should just be able to order them and assign a color ramp
 
