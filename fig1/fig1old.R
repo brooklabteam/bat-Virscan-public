@@ -59,7 +59,7 @@ meta <- meta[meta$Run.ID!="",] #95 bats. so there are 11 bats (two Pa1s) for whi
 setdiff(unique(dat$ID), unique(meta$ID)) #none. all phipseq outputs are represented in the metadata
 setdiff(unique(meta$ID), unique(dat$ID)) 
 
-# we are missing phip-seq data for these bats - is this because there were no hits?
+# we are missing phip-seq data for these bats
 #"Pa29"  "Pa50"  "Pa59"  "Pa77"  "Pa81"  "Pa10"  "Pa100" "Pa101" "Pa1"   "Pa2"   "Pa3"  
 
 
@@ -146,9 +146,6 @@ pa.list <- dlply(pa.merge, .(virus_family))
 dat.sum <- ddply(dat,.(virus_family), summarise, N_subfamily =length(unique(virus_subfamily)))
 max(dat.sum$N_subfamily) #at most 5 subfamilies within a family
 max(pa.merge$Assigned.counts) #326
-
-
-
 
 #plotting function for one virus family -- apply over lists and populate grid
 plot.heat <- function(df, all.bat, leg.name){
@@ -282,65 +279,37 @@ ggsave(file = paste0(homewd,"/supp-figures/figS2.png"),
 
 
 #then, make subplot just for the main bat viruses, plus a few purely human libraries
-
-#make a list by virus family
-
-pa.list <- dlply(pa.merge, .(virus_family))
-
-#testing a few things to include in plotting function below
-dat.sum <- ddply(dat,.(virus_family), summarise, N_subfamily =length(unique(virus_subfamily)))
-max(dat.sum$N_subfamily) #at most 5 subfamilies within a family
-max(pa.merge$Assigned.counts) 
-
+#first, add spaces for two lines in some of the genus names
 
 
 pa.list.bat <- list()
 #list.fam = c("Paramyxoviridae", "Filoviridae", "Rhabdoviridae", "Coronaviridae", "Hantaviridae", "Adenoviridae")
-#list.fam = c("Paramyxoviridae", "Filoviridae", "Rhabdoviridae", "Coronaviridae", "Flaviviridae", "Adenoviridae")
-list.fam = c( "Paramyxoviridae", "Picornaviridae")
+list.fam = c("Paramyxoviridae", "Filoviridae", "Rhabdoviridae", "Coronaviridae", "Flaviviridae", "Adenoviridae")
 for (i in 1:length(list.fam)){
   pa.list.bat[[i]] <-  pa.list[[list.fam[i]]]
 }
 
-
-
-
 pa.list.bat.df <- data.table::rbindlist(pa.list.bat)
-unique(pa.list.bat.df$virus_subfamily)
-pa.list.bat.df$virus_subfamily[pa.list.bat.df$virus_subfamily=="Heptrevirinae"] <- "Hep."
-pa.list.bat.df$virus_subfamily[pa.list.bat.df$virus_subfamily=="Picornaviridae"] <- "Pic."
-
 unique(pa.list.bat.df$virus_genus)
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="unc. Paramyxo"] <- "unc.\nPar."
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Ledantevirus"] <- "Ledante\nvirus"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Pegivirus"] <- "Pegi\nvirus"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="unc. Paramyxo"] <- "unc.\nParamyxo"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Ledantevirus"] <- "Ledante\nvirus"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Pegivirus"] <- "Pegi\nvirus"
 pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Avulavirus"]<- "Avulavirus\n"
 pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Henipavirus"] <- "Henipavirus\n"
 pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Respirovirus"]<- "Respirovirus\n"
 pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Rubulavirus"] <- "Rubulavirus\n"
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Cosavirus"]<- "Cosavirus\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Marburgvirus"] <- "Marburgvirus\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Ebolavirus"] <- "Ebolavirus\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Lyssavirus"] <- "Lyssavirus\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Vesiculovirus"] <- "Vesiculovirus\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Betacoronavirus"] <- "Betacoronavirus\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Flavivirus"] <- "Flavivirus\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Betacoronavirus"] <- "Betacoronavirus\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Hepacivirus"] <- "Hepacivirus\n"
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Hepatovirus"] <- "Hep.\n"
-#pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Mastadenovirus"] <- "Mastadenovirus\n"
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Rosavirus"] <- "Ros.\n"
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Enterovirus"] <- "Enterovirus\n"
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Kobuvirus"] <- "Kob.\n"
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Salivirus"] <- "Salivirus\n"
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Cardiovirus"] <- "Cardio.\n"
-pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Parechovirus"] <- "Par.\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Marburgvirus"] <- "Marburgvirus\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Ebolavirus"] <- "Ebolavirus\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Lyssavirus"] <- "Lyssavirus\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Vesiculovirus"] <- "Vesiculovirus\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Betacoronavirus"] <- "Betacoronavirus\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Flavivirus"] <- "Flavivirus\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Betacoronavirus"] <- "Betacoronavirus\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Hepacivirus"] <- "Hepacivirus\n"
+pa.list.bat.df$virus_genus[pa.list.bat.df$virus_genus=="Mastadenovirus"] <- "Mastadenovirus\n"
 
 
-
-
-#pa.list.bat.df$virus_family <- factor(pa.list.bat.df$virus_family, levels = c("Paramyxoviridae", "Filoviridae",  "Coronaviridae",  "Rhabdoviridae", "Flaviviridae", "Adenoviridae"))
-pa.list.bat.df$virus_family <- factor(pa.list.bat.df$virus_family, levels = c("Paramyxoviridae", "Picornaviridae"))
+pa.list.bat.df$virus_family <- factor(pa.list.bat.df$virus_family, levels = c("Paramyxoviridae", "Filoviridae",  "Coronaviridae",  "Rhabdoviridae", "Flaviviridae", "Adenoviridae"))
 pa.list.bat <- dlply(pa.list.bat.df, .(virus_family))
 
 #function with bigger titles
@@ -410,7 +379,6 @@ plot.heat.big <- function(df, all.bat, leg.name){
                                            panel.grid.major.x =  element_blank(),
                                            panel.grid.major.y = element_line(color="black"),
                                            panel.grid.minor.y = element_line(color="black"),
-                                           plot.margin = unit(c(.5,.5,.5,.1), "cm"),
                                            #strip.text = element_text(size=12),
                                            axis.title.x = element_blank(), axis.ticks.x = element_blank(), 
                                            axis.text.x = element_blank(), axis.title.y = element_blank()) +#,
@@ -427,7 +395,6 @@ plot.heat.big <- function(df, all.bat, leg.name){
     p1 <- ggplot(df1) + theme_bw() + theme(panel.grid.minor = element_blank(), 
                                            panel.grid.major.x =  element_blank(),
                                            plot.title = element_text(size=18),
-                                           #legend.position = "bottomright",
                                            panel.grid.major.y = element_line(color="black"),
                                            panel.grid.minor.y = element_line(color="black"),
                                            axis.title.x = element_blank(), axis.ticks.x = element_blank(), 
@@ -444,175 +411,28 @@ plot.heat.big <- function(df, all.bat, leg.name){
 
 
 
-#fig1.list  <-  lapply(pa.list.bat, plot.heat.big, all.bat=sort(unique(pa.dat$rank)),  leg.name="Coronaviridae")
-fig1.list  <-  lapply(pa.list.bat, plot.heat.big, all.bat=sort(unique(pa.dat$rank)), leg.name="Picornaviridae")
-#fig1 <- cowplot::plot_grid(plotlist = fig1.list, ncol = 3, align = "v", axis="lr", labels = c("A", "B", "C", "D", "E", "F"), label_size = 20, label_y = 1.005, rel_heights = c(1,1,1,1.2,1.2,1.2))    
-fig1right <- cowplot::plot_grid(plotlist = fig1.list, nrow = 2, align = "v", axis="lr", labels = c("B", "C"), label_size = 20, label_y = 1.005, rel_heights = c(.667,1))    
+fig1.list  <-  lapply(pa.list.bat, plot.heat.big, all.bat=sort(unique(pa.dat$rank)),  leg.name="Coronaviridae")
+fig1 <- cowplot::plot_grid(plotlist = fig1.list, ncol = 3, align = "v", axis="lr", labels = c("A", "B", "C", "D", "E", "F"), label_size = 20, label_y = 1.005, rel_heights = c(1,1,1,1.2,1.2,1.2))    
 
-
-#and add in panel A
-
-
-#and make the mock dataset for the cartoon - do it on a subset of 3 bats
-pa.mock <- cbind.data.frame(virus_family = rep("Virus-Family-Ex", 10),
-                            virus_subfamily = c(rep("Virus-Subfamily-A", 6), rep("Virus-Subfamily-B", 4)),
-                            virus_genus=c(rep("Virus-Genus-a", 3), rep("Virus-Genus-b", 3), rep("Virus-Genus-c", 2), rep("Virus-Genus-d", 2)),
-                            virus_species= paste0("Virus-Species-", seq(1,10,1)))
-
-#and add in the rank of the bat
-#bat 1 is exposed across the entire family
-pa.mock$rank <- NA
-pa.mock$Assigned.counts <- NA
-pa.mock$rank[1:4] <- pa.mock$rank[7:10] <- 1 
-pa.mock$Assigned.counts[1:4] <-  c(20,25,15,10)
-pa.mock$Assigned.counts[7:10] <- c(5,22,27,21)
-
-#bat 2 is just subfamily B - but multiple genera
-pa.mock <- rbind(pa.mock, pa.mock[8,])
-pa.mock$rank[9:11] <- 2
-pa.mock$Assigned.counts[9:11] <- c(30, 50, 70)
-#bat 3 is just genera a but multiple species
-pa.mock$rank[5:6] <- 3
-pa.mock$Assigned.counts[5:6]<- c(205, 150)
-
-pa.mock <- merge(pa.mock, pa.merge, by=c("virus_species", "virus_family", "virus_subfamily", "virus_genus", "rank", "Assigned.counts"), all.x = T)
-head(pa.mock)
-pa.mock <- dplyr::select(pa.mock, names(pa.merge))
-head(pa.mock)
-
-pa.mock$virus_genus[pa.mock$virus_genus=="Virus-Genus-a"] <- "Virus-Genus-a\n"
-pa.mock$virus_genus[pa.mock$virus_genus=="Virus-Genus-b"] <- "Virus-Genus-b\n"
-pa.mock$virus_genus[pa.mock$virus_genus=="Virus-Genus-c"] <- "Virus-Genus-c\n"
-pa.mock$virus_genus[pa.mock$virus_genus=="Virus-Genus-d"] <- "Virus-Genus-d\n"
-
-
-pa.mock <- arrange(pa.mock, rank)
-
-plot.mock.heat <- function(df, all.bat, leg.name){
-  
-  
-  
-  #first, attach blanks for the bats with no hits to this virus
-  #all.bat = setdiff(all.bat, unique(df$rank))
-  rank.df <- cbind.data.frame(rank=rep(all.bat, length(unique(df$virus_species))), virus_species=rep(unique(df$virus_species), each=length(all.bat)))
-  subfam.sum <- ddply(df, .(virus_subfamily, virus_genus, virus_species), summarise)
-  rank.df <- merge(rank.df, subfam.sum, by ="virus_species", all.x = T)
-  #rank.df$Assigned.counts <- 0
-  head(rank.df)
-  
-  df1 <- merge(df, rank.df, by = c("rank", "virus_subfamily", "virus_genus", "virus_species"), all = T)
-  df1 <- arrange(df1, rank)
-  df1$ID <- factor(df1$ID, levels=unique(df1$ID))
-  
-  # #need list of 5 possible palette
-  subfam.col.list = c("Blues", "Reds", "Purples", "Oranges", "Greens")
-  # 
-  # #nested colors for strip labels
-  ncol = length(unique(df$virus_subfamily)) #number distinct subfamily
-  subfam.col.list <- subfam.col.list[1:ncol] 
-  # 
-  # #and get the sub-palettes
-  df.sum <- ddply(df1, .(virus_subfamily), summarise, N_genus = length(unique(virus_genus)))
-  # 
-  df.sum$N_genus <- df.sum$N_genus+1 #add one for the subfamily
-  # 
-  palette.list <- list()
-  for(i in 1:length(df.sum$virus_subfamily)){
-    palette.list[[i]] <- rev(brewer.pal(n=df.sum$N_genus[i], name=subfam.col.list[i]))[1:df.sum$N_genus[i]]
-  }
-  # 
-  #this gives a nested list of colors
-  
-  palette.vector <- c(unlist(palette.list))
-  names(palette.vector) <- c(unlist(mapply(rep, as.list(df.sum$virus_subfamily), each=as.list(df.sum$N_genus), SIMPLIFY = F)))
-  
-  for(i in 1:length(df.sum$virus_subfamily)){
-    names(palette.vector)[names(palette.vector)==df.sum$virus_subfamily[i]] <- c(df.sum$virus_subfamily[i], unique(df$virus_genus[df$virus_subfamily==df.sum$virus_subfamily[i]]))
-  }
-  
-  #then, reorder for plotting to take the virus_subfamily entries first
-  new.palette <- list()
-  for(i in 1:length(df.sum$virus_subfamily)){
-    index <- which(names(palette.vector)==df.sum$virus_subfamily[i]) 
-    new.palette[[i]] <- palette.vector[index]
-  }
-  new.palette <- c(unlist(new.palette))
-  new.palette  <- c(new.palette, setdiff(palette.vector, new.palette))
-  
-  
-  #now set custom strips function to take in your colors
-  custom_strips <- strip_nested(
-    background_y = elem_list_rect(
-      fill = new.palette),
-    by_layer_y = FALSE
-  )
-  
-  df1$virus_species <- factor(df1$virus_species, levels = c("Virus-Species-1", "Virus-Species-2", "Virus-Species-3", "Virus-Species-4", "Virus-Species-5", "Virus-Species-6", "Virus-Species-7", "Virus-Species-8", "Virus-Species-9", "Virus-Species-10"))
-  df1$virus_subfamily <- factor(df1$virus_subfamily, levels = c("Virus-Subfamily-B", "Virus-Subfamily-A"))
-  df1$virus_genus <- factor(df1$virus_genus, levels = c("Virus-Genus-d\n", "Virus-Genus-c\n", "Virus-Genus-b\n", "Virus-Genus-a\n"))
-  
-  df1$label <- NA
-  df1$label[df1$rank==1] <- "Bat seropositive at\n'Example-Virus-Family'\nlevel only"
-  df1$label[df1$rank==2] <- "Bat seropositive at\n'Example-Virus-Family'\nand 'Virus-Subfamily-B'"
-  df1$label[df1$rank==3] <- "Bat seropositive at\n'Example-Virus-Family',\n'Virus-Subfamily-A',\nand 'Virus-Genus-b'"
-  
-  df1$rank <- df1$label
-  df1$rank <- factor(df1$rank, levels=c("Bat seropositive at\n'Example-Virus-Family'\nlevel only",
-                                        "Bat seropositive at\n'Example-Virus-Family'\nand 'Virus-Subfamily-B'",
-                                        "Bat seropositive at\n'Example-Virus-Family',\n'Virus-Subfamily-A',\nand 'Virus-Genus-b'"))
-  if(unique(df$virus_family !=leg.name)){
-    p1 <- ggplot(df1) + theme_bw() + theme(panel.grid.minor = element_blank(), 
-                                           plot.title = element_text(size=18),
-                                           panel.grid.major.x =  element_line(color="black", size=1),
-                                           panel.grid.minor.x =  element_line(color="black", size=1),
-                                           panel.grid.major.y = element_line(color="black", size=1),
-                                           panel.grid.minor.y = element_line(color="black", size=1),
-                                           plot.margin = unit(c(.5,.1,.5,.5), "cm"),
-                                           strip.text = element_text(size=13),
-                                           axis.text.x = element_text(size=11), 
-                                           axis.text.y = element_text(size=12), 
-                                           axis.ticks.x = element_blank(), 
-                                           axis.title.x = element_blank(), axis.title.y = element_blank()) +#,
-      #legend.position = "bottom", #legend.title = element_blank(),
-      #legend.direction = "horizontal")+
-      geom_tile(aes(x=rank, y=virus_species, fill=Assigned.counts), width=1, show.legend = F) +
-      scale_fill_viridis_c(values=c(0,.05,.1,1), limits=c(0,330), na.value = "gray", name="peptide\ncounts") + scale_y_discrete(position = "right") +
-      facet_nested(virus_subfamily + virus_genus~., scales = "free", space = "free_y",
-                   switch = "y", strip = custom_strips) + coord_cartesian(expand=F) + ggtitle(label = "Example-Virus-Family") +
-      geom_vline(xintercept = seq(1.5, (3+.5),1), color = "black")
-    
-    
-  }else{
-    p1 <- ggplot(df1) + theme_bw() + theme(panel.grid.minor = element_blank(), 
-                                           panel.grid.major.x =  element_blank(),
-                                           plot.title = element_text(size=18),
-                                           panel.grid.major.y = element_line(color="black"),
-                                           panel.grid.minor.y = element_line(color="black"),
-                                           axis.title.x = element_blank(), axis.ticks.x = element_blank(), 
-                                           axis.text.x = element_blank(), axis.title.y = element_blank()) +
-      geom_tile(aes(x=rank, y=virus_species, fill=Assigned.counts), width=1) +
-      scale_fill_viridis_c(values=c(0,.05,.1,1), limits=c(0,330), na.value = "gray", name="peptide\ncounts") + scale_y_discrete(position = "right") +
-      facet_nested(virus_subfamily + virus_genus~., scales = "free", space = "free_y",
-                   switch = "y", strip = custom_strips) + coord_cartesian(expand=F) + ggtitle(label = unique(df$virus_family)) +
-      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "black")
-  }
-  return(p1)
-  
-}
-
-fig1left <- plot.mock.heat(df=pa.mock, all.bat = 1:3, leg.name = "")
-
-
-fig1 <- cowplot::plot_grid(fig1left, fig1right, ncol=2, rel_widths = c(1,1.1), labels = c("A", ""), label_size = 20)
 
 
 
 ggsave(file = paste0(homewd,"/final-figures/fig1.png"),
        plot=fig1,
        units="mm",  
-       width=140, 
-       height=110, 
-       scale=3, 
+       width=130, 
+       height=90, 
+       scale=7, 
        dpi=300)
 
 
+# #try flavi
+# p.tmp <- plot.heat(pa.list$Flaviviridae, all.bat=sort(unique(pa.dat$rank)),  leg.name="Flaviviridae")
+# 
+# ggsave(file = paste0(homewd,"/supp-figures/figFlavi.png"),
+#        plot=p.tmp,
+#        units="mm",  
+#        width=60, 
+#        height=60, 
+#        scale=7, 
+#        dpi=300)
