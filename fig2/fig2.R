@@ -31,6 +31,8 @@ library(paletteer)
 
 #set wd - make a link to homewd for your own folder
 homewd = "/Users/carabrook/Developer/bat-VirScan-public"
+homewd = "/Users/emilyruhs/Desktop/UChi_Brook_Lab/GitHub_repos/bat-VirScan-public"
+
 setwd(homewd)
 
 #load data from Phip-Seq
@@ -86,8 +88,16 @@ ggplot(data=subset(meta, Species=="Pteropus alecto" & !is.na(Age_cat))) + geom_p
 m1 <- lm(Mass_g~Forearm_mm, data=subset(meta, Age_cat=="Adult" & Species=="Pteropus alecto"))
 summary(m1)
 
+sink("m1_adult_massforearm.txt")
+summary(m1)
+sink()
+
 m2 <- lm(Mass_g~Forearm_mm, data=subset(meta, Age_cat=="Sub Adult"& Species=="Pteropus alecto"))
 summary(m2)
+
+sink("m2_subadult_massforearm.txt")
+summary(m2)
+sink()
 
 #and add prediction to the dataset
 meta$predicted_mass_g <- NA
@@ -235,7 +245,7 @@ score.virus <- function(df1){
                                  cat="virus_genus")
     }}
   
-    return(out.df)
+  return(out.df)
 }
 score.sero <- function(df){
   
@@ -375,7 +385,7 @@ Fig2a <- ggplot(data=pa.family) + geom_bar(aes(x=virus_family, y=seroprev, fill=
                       plot.margin = unit(c(.2,.8,.1,.2), "cm"),
                       panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=9, vjust=-2,  color="black"), strip.text = element_text(size=16),
                       axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
-  labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)#+scale_fill_manual(values=cols1) 
+  labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)+scale_fill_grey()
 
 
 Fig2b <- ggplot(data=pa.subfamily) + geom_bar(aes(x=virus_subfamily, y=seroprev, fill=virus_subfamily), stat="identity", position = "dodge")  + facet_grid(~cat)+
@@ -383,17 +393,17 @@ Fig2b <- ggplot(data=pa.subfamily) + geom_bar(aes(x=virus_subfamily, y=seroprev,
                       panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=9, vjust=-2,  color="black"), strip.text = element_text(size=14),
                       plot.margin = unit(c(.2,.8,.1,.2), "cm"),
                       axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
-  labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)#+scale_fill_manual(values=cols1) 
+  labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)+scale_fill_grey()
 
 Fig2c <- ggplot(data=pa.genus) + geom_bar(aes(x=virus_genus, y=seroprev, fill=virus_genus), stat="identity", position = "dodge")  + facet_grid(~cat)+
   theme_bw() +  theme(legend.title = element_blank(), legend.text =element_text(size=7), strip.background = element_rect(fill="white"), strip.placement = "outside",
                       panel.grid = element_blank(), axis.text.x = element_text(angle=300, size=9, vjust=-2,  color="black"), strip.text = element_text(size=16),
                       plot.margin = unit(c(.2,.8,.1,.2), "cm"),
                       axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
-  labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)#+scale_fill_manual(values=cols1) 
+  labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)+scale_fill_grey()
 
 Fig2abc <- cowplot::plot_grid(Fig2a, Fig2b, Fig2c, ncol=1, nrow=3, labels = c("A", "B", "C"), label_size = 20)
-Fig2ab <- cowplot::plot_grid(Fig2a, Fig2c,ncol=1, nrow=2, labels = c("A", "B"), label_size = 20)
+Fig2ac <- cowplot::plot_grid(Fig2a, Fig2c,ncol=1, nrow=2, labels = c("A", "B"), label_size = 20)
 
 
 head(pa.genus)
@@ -435,7 +445,7 @@ nested.colors <- function(df, col.pal){
   ordered.vector <- ordered.vector[!is.na(ordered.vector)]
   
   #if(length(ordered.vector)>2){
-   # colorz = rev(brewer.pal(n=length(ordered.vector), name = col.pal))  
+  # colorz = rev(brewer.pal(n=length(ordered.vector), name = col.pal))  
   #}else{
   brewer.palettes <- c("Blues", "Reds", "Purples", "Oranges", "Greens", "Greys")
   brewer.pal = brewer.palettes[brewer.palettes==col.pal]
@@ -460,7 +470,7 @@ nested.colors <- function(df, col.pal){
     colorz <- palette[1:length(ordered.vector)]
     
   }
-    
+  
   #}
   
   names(colorz) <- ordered.vector
@@ -485,7 +495,7 @@ same.nested.colors <- function(df, col.pal.num){
   colorz <- rep(all.colors[col.pal.num], length(ordered.vector))
   
   names(colorz) <- ordered.vector  
- 
+  
   return(colorz)
 }
 
@@ -549,16 +559,16 @@ test<- ggplot(subset(bat.ID.sum, species=="Homo sapiens"), aes(x=N_exposures, fi
 
 
 Fig2d1 <- ggplot(data=bat.ID.sum) + theme_bw() +
-         geom_violin(aes(x=species, y=N_exposures, fill=species), scale = "width",
-                     draw_quantiles=c(0.025,0.5,0.975), show.legend = F) + ylab("number virus exposures") +
-         geom_jitter(aes(x=species, y=N_exposures),size=1,width=.1,height=0) +
-        theme(panel.grid = element_blank(), axis.text.x = element_text(size=14, face="italic", color="black"),
-              plot.margin = unit(c(.1,.1,1.5,.1), "cm"),
-        axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_blank())
+  geom_violin(aes(x=species, y=N_exposures, fill=species), scale = "width",
+              draw_quantiles=c(0.025,0.5,0.975), show.legend = F) + ylab("number viruses detected") +
+  geom_jitter(aes(x=species, y=N_exposures),size=1,width=.1,height=0) +
+  theme(panel.grid = element_blank(), axis.text.x = element_text(size=14, face="italic", color="black"),
+        plot.margin = unit(c(.1,.1,1.5,.1), "cm"),
+        axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_blank())+scale_fill_grey()
 
 Fig2d2 <- ggplot(data=bat.ID.sum) + theme_bw() +
   geom_boxplot(aes(x=species, y=N_exposures, fill=species), scale = "width",
-              draw_quantiles=c(0.025,0.5,0.975), show.legend = F) + ylab("number virus exposures") +
+               draw_quantiles=c(0.025,0.5,0.975), show.legend = F) + ylab("number viruses detected") +
   #geom_jitter(aes(x=species, y=N_exposures),size=1,width=.1,height=0) +
   theme(panel.grid = element_blank(), axis.text.x = element_text(size=14, face="italic", color="black"),
         plot.margin = unit(c(.1,.1,1.5,.1), "cm"),
@@ -569,12 +579,12 @@ Fig2d2 <- ggplot(data=bat.ID.sum) + theme_bw() +
 
 
 Fig2d3 <- ggplot(bat.ID.sum, aes(x=N_exposures, fill=species)) + 
-          geom_histogram(binwidth=2, color="black") + theme_bw() +
-          theme(legend.title = element_blank(), legend.text=element_text(face="italic"), panel.grid = element_blank(),
-                axis.title = element_text(size=16), axis.text = element_text(size=14),
-                plot.margin = unit(c(.2,.1,1.5,.1), "cm"),
-                legend.position = c(.85,.85)) + xlab("number of virus exposures") + ylab("frequency") +
-          scale_y_continuous(breaks = c(0,20,40,60,80,100,120))
+  geom_histogram(binwidth=2, color="black") + theme_bw() +
+  theme(legend.title = element_blank(), legend.text=element_text(face="italic"), panel.grid = element_blank(),
+        axis.title = element_text(size=16), axis.text = element_text(size=14),
+        plot.margin = unit(c(.2,.1,1.5,.1), "cm"),
+        legend.position = c(.85,.85)) + xlab("number of viruses detected") + ylab("frequency") +
+  scale_y_continuous(breaks = c(0,20,40,60,80,100,120))+scale_fill_grey()
 
 #compare
 sum.dat <- ddply(bat.ID.sum, .(species), summarise, mean=mean(N_exposures), median = median(N_exposures))
@@ -587,10 +597,10 @@ Fig2cd <- cowplot::plot_grid(Fig2d3, Fig2d1, ncol=1, nrow=2, labels = c("C", "D"
 
 
 #Fig2 <- cowplot::plot_grid(Fig2abc, Fig2def , ncol=2, nrow=1, rel_widths = c(1,.6))
-Fig2 <- cowplot::plot_grid(Fig2ab, Fig2cd , ncol=2, nrow=1, rel_widths = c(1,.6))
+Fig2 <- cowplot::plot_grid(Fig2ac, Fig2cd , ncol=2, nrow=1, rel_widths = c(1,.6))
 
 
-ggsave(file = paste0(homewd,"/final-figures/fig2.png"),
+ggsave(file = paste0(homewd,"/final-figures/fig2_blackwhite.png"),
        plot=Fig2,
        units="mm",  
        width=90, 
