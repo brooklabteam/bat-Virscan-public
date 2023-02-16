@@ -266,10 +266,27 @@ int.df$sig_label[int.df$group=="Alphavirus"| int.df$group=="Enterovirus" |
 
 
 
-#test code for adding back in confidence intervals
+#test code for adding back in confidence intervals - taken from summary(m2)
 int.df$conf.low <- 0
 int.df$conf.high <- 0
 int.df$conf.low[int.df$group=="Alphavirus"] <- (int.df$predicted[int.df$group=="Alphavirus"] - (0.0032452))
+int.df$conf.low[int.df$group=="Enterovirus"] <- (int.df$predicted[int.df$group=="Enterovirus"] - (0.0038048))
+int.df$conf.low[int.df$group=="Gammaretrovirus"] <- (int.df$predicted[int.df$group=="Gammaretrovirus"] - (0.0036252))
+int.df$conf.low[int.df$group=="Betainfluenzavirus"] <- (int.df$predicted[int.df$group=="Betainfluenzavirus"] - (0.0035187))
+int.df$conf.low[int.df$group=="Mastadenovirus"] <- (int.df$predicted[int.df$group=="Mastadenovirus"] - (0.0035884))
+int.df$conf.low[int.df$group=="Orthopoxvirus"] <- (int.df$predicted[int.df$group=="Orthopoxvirus"] - (0.0032728))
+int.df$conf.low[int.df$group=="Rotavirus"] <- (int.df$predicted[int.df$group=="Rotavirus"] - (0.0033401))
+int.df$conf.low[int.df$group=="Rubivirus"] <- (int.df$predicted[int.df$group=="Rubivirus"] - (0.0040620))
+
+int.df$conf.high[int.df$group=="Alphavirus"] <- (int.df$predicted[int.df$group=="Alphavirus"] + (0.0032452))
+int.df$conf.high[int.df$group=="Enterovirus"] <- (int.df$predicted[int.df$group=="Enterovirus"] + (0.0038048))
+int.df$conf.high[int.df$group=="Gammaretrovirus"] <- (int.df$predicted[int.df$group=="Gammaretrovirus"] + (0.0036252))
+int.df$conf.high[int.df$group=="Betainfluenzavirus"] <- (int.df$predicted[int.df$group=="Betainfluenzavirus"] + (0.0035187))
+int.df$conf.high[int.df$group=="Mastadenovirus"] <- (int.df$predicted[int.df$group=="Mastadenovirus"] + (0.0035884))
+int.df$conf.high[int.df$group=="Orthopoxvirus"] <- (int.df$predicted[int.df$group=="Orthopoxvirus"] + (0.0032728))
+int.df$conf.high[int.df$group=="Rotavirus"] <- (int.df$predicted[int.df$group=="Rotavirus"] + (0.0033401))
+int.df$conf.high[int.df$group=="Rubivirus"] <- (int.df$predicted[int.df$group=="Rubivirus"] + (0.0040620))
+
 
 #Also for the Supp Matt, plot it all
 FigS5 <- ggplot(data=int.df) + 
@@ -304,6 +321,7 @@ sub.df = subset(int.df,group == "Alphavirus"| group =="Enterovirus" |
                        group == "Gammaretrovirus" | group=="Betainfluenzavirus" | group == "Mastadenovirus" | 
                        group == "Orthopoxvirus"| group == "Rotavirus" | group =="Rubivirus" )
 
+sub.df.test = subset(int.df,group == "Alphavirus")
 
 # sub.df = subset(int.df, group == "Alphavirus"| group =="Avulavirus" | 
 #                   group == "Orthohantavirus" | group=="Betacoronavirus" | group == "Rotavirus" | 
@@ -311,19 +329,19 @@ sub.df = subset(int.df,group == "Alphavirus"| group =="Enterovirus" |
 
 
 # @ Emily, not sure if you can find a way to get the confidence intervals back...?
-Fig3cflip <- ggplot(data=sub.df) + theme_bw() +
-  theme(panel.grid = element_blank(), legend.title = element_blank(),
-        legend.position = "bottom",legend.background = element_rect(color="black"),
-        legend.direction = "horizontal",
-        axis.title = element_text(size=16), axis.text = element_text(size=14),
-        plot.margin = unit(c(.5,.1,.1,.1), "cm")) +
-  geom_line(aes(x=x, y=predicted, color=group))+ 
-  ylab("serostatus") + xlab("mass : forearm residual") +
-  scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
-  coord_flip(ylim=c(0,1.1)) #+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
+# Fig3cflip <- ggplot(data=sub.df) + theme_bw() +
+#   theme(panel.grid = element_blank(), legend.title = element_blank(),
+#         legend.position = "bottom",legend.background = element_rect(color="black"),
+#         legend.direction = "horizontal",
+#         axis.title = element_text(size=16), axis.text = element_text(size=14),
+#         plot.margin = unit(c(.5,.1,.1,.1), "cm")) +
+#   geom_line(aes(x=x, y=predicted, color=group))+ 
+#   ylab("serostatus") + xlab("mass : forearm residual") +
+#   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
+#   coord_flip(ylim=c(0,1.1)) #+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
 
 # @ Emily, not sure if you can find a way to get the confidence intervals back...?
-Fig3c <- ggplot(data=sub.df) + theme_bw() +
+Fig3c <- ggplot(data=sub.df.test) + theme_bw() +
   theme(panel.grid = element_blank(), legend.title = element_blank(),
         legend.position = "bottom",legend.background = element_rect(color="black"),
         legend.direction = "horizontal",
@@ -332,7 +350,7 @@ Fig3c <- ggplot(data=sub.df) + theme_bw() +
   geom_line(aes(x=x, y=predicted, color=group))+ 
   ylab("serostatus") + xlab("mass : forearm residual") +
   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
-  coord_cartesian(ylim=c(0,1.1)) #+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
+  coord_cartesian(ylim=c(0,1.1)) + geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
 
 
 
