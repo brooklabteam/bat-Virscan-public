@@ -213,7 +213,7 @@ subset(adjusted.P, isSigCorrect=="yes")
 
 
 plot.sub.df = subset(plot.dat,virus_genus == "Alphavirus"| virus_genus =="Enterovirus" | 
-                       virus_genus == "Gammaretrovirus" | virus_genus=="Influenzavirus_B" | virus_genus == "Mastadenovirus" | 
+                       virus_genus == "Gammaretrovirus" | virus_genus=="Betainfluenzavirus" | virus_genus == "Mastadenovirus" | 
                        virus_genus == "Orthopoxvirus"| virus_genus == "Rotavirus" | virus_genus =="Rubivirus" )
 
 
@@ -224,8 +224,10 @@ plot.sub.df$interaction[plot.sub.df$virus_genus=="Enterovirus" | plot.sub.df$vir
 
 
 Fig3b <- ggplot(plot.sub.df, aes(x=virus_genus, y=mass_residuals)) + theme_bw()+
+  theme(legend.position = c(.08,.9), legend.title = element_blank(),
+        legend.background = element_rect(color="black"))+
   geom_violin(aes(fill=serostatus), 
-              draw_quantiles = c(0,.25,.50,.75,1), show.legend = F) + 
+              draw_quantiles = c(0,.25,.50,.75,1), show.legend = T) + 
   geom_hline(yintercept = 0, linetype=2) + ylab("mass : forearm residuals") +
   geom_point(aes(fill=serostatus), position = position_jitterdodge(), 
              size=.2, show.legend = F) + ggh4x::facet_nested(~interaction, scales= "free", space = "free") +
@@ -259,7 +261,7 @@ head(int.df)
 #now add which were significant as stars
 int.df$sig_label <- ""
 int.df$sig_label[int.df$group=="Alphavirus"| int.df$group=="Enterovirus" | 
-                   int.df$group== "Gammaretrovirus" | int.df$group=="Influenzavirus_B" | int.df$group=="Mastadenovirus" | 
+                   int.df$group== "Gammaretrovirus" | int.df$group=="Betainfluenzavirus" | int.df$group=="Mastadenovirus" | 
                    int.df$group=="Orthopoxvirus"| int.df$group=="Rotavirus" | int.df$group=="Rubivirus"] <- "***"
 
 
@@ -299,7 +301,7 @@ ggsave(file = paste0(homewd,"/supp-figures/figS5.png"),
 
 
 sub.df = subset(int.df,group == "Alphavirus"| group =="Enterovirus" | 
-                       group == "Gammaretrovirus" | group=="Influenzavirus_B" | group == "Mastadenovirus" | 
+                       group == "Gammaretrovirus" | group=="Betainfluenzavirus" | group == "Mastadenovirus" | 
                        group == "Orthopoxvirus"| group == "Rotavirus" | group =="Rubivirus" )
 
 
@@ -336,15 +338,15 @@ Fig3c <- ggplot(data=sub.df) + theme_bw() +
 
 #and combine these together:
 
-Fig3flip <- cowplot::plot_grid(Fig3a, Fig3b, Fig3cflip, ncol=3, labels = c("A", "B", "C"), rel_widths = c(1,1.2,1), label_size = 22)
-
-ggsave(file = paste0(homewd,"/final-figures/fig3flip.png"),
-       plot=Fig3flip,
-       units="mm",  
-       width=150, 
-       height=50, 
-       scale=3, 
-       dpi=300)
+# Fig3flip <- cowplot::plot_grid(Fig3a, Fig3b, Fig3cflip, ncol=3, labels = c("A", "B", "C"), rel_widths = c(1,1.2,1), label_size = 22)
+# 
+# ggsave(file = paste0(homewd,"/final-figures/fig3flip.png"),
+#        plot=Fig3flip,
+#        units="mm",  
+#        width=150, 
+#        height=50, 
+#        scale=3, 
+#        dpi=300)
 
 Fig3 <- cowplot::plot_grid(Fig3a, Fig3b, Fig3c, ncol=3, labels = c("A", "B", "C"), rel_widths = c(1,1.2,1), label_size = 22)
 
