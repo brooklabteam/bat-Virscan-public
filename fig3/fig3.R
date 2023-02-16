@@ -144,7 +144,7 @@ plot.dat$ID <- as.factor(plot.dat$ID)
 # add which were significant as stars
 plot.dat$sig_label <- ""
 plot.dat$sig_label[plot.dat$virus_genus=="Alphavirus"| plot.dat$virus_genus=="Enterovirus" | 
-                   plot.dat$virus_genus== "Gammaretrovirus" | plot.dat$virus_genus=="Influenzavirus_B" | plot.dat$virus_genus=="Mastadenovirus" | 
+                   plot.dat$virus_genus== "Gammaretrovirus" | plot.dat$virus_genus=="Betainfluenzavirus" | plot.dat$virus_genus=="Mastadenovirus" | 
                    plot.dat$virus_genus=="Orthopoxvirus"| plot.dat$virus_genus=="Rotavirus" | plot.dat$virus_genus=="Rubivirus"] <- "***"
 
 
