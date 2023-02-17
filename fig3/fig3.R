@@ -17,7 +17,7 @@ library(sjPlot)
 #load the data
 #comment out when not for your system
 homewd = "/Users/emilyruhs/Desktop/UChi_Brook_Lab/GitHub_repos/bat-VirScan-public"
-homewd = "/Users/carabrook/Developer/bat-Virscan-public"
+#homewd = "/Users/carabrook/Developer/bat-Virscan-public"
 setwd(homewd)
 
 exp.dat <- read.csv(file = paste0(homewd, "/working-data/all_bat_exposures.csv"), header = T, stringsAsFactors = F)
@@ -255,6 +255,9 @@ plot_model(m2, "pred", terms=c("mass_residuals", "virus_genus"))
 int.dat <- plot_model(m2, "int", mdrt.values="meansd", ci.lvl = .9)$data
 int.dat <- plot_model(m2, "int")$data
 
+#this gets you the same
+#int.dat.2 <- plot_model(m2, "pred", terms=c("mass_residuals", "virus_genus"), ci.lvl=.9)$data
+
 int.df <- cbind.data.frame(int.dat)
 head(int.df)
 
@@ -347,23 +350,20 @@ Fig3c <- ggplot(data=sub.df) + theme_bw() +
         legend.direction = "horizontal",
         axis.title = element_text(size=16), axis.text = element_text(size=14),
         plot.margin = unit(c(.5,.1,.1,.1), "cm")) +
-  geom_line(aes(x=x, y=predicted, color=group))+ 
+  geom_line(aes(x=x, y=predicted, color=group_col))+ 
   ylab("serostatus") + xlab("mass : forearm residual") +
   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
   coord_cartesian(ylim=c(0,1.1)) 
 
-Fig3c+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.2)
+Fig3c + geom_errorbar(aes(x=x, ymin=conf.low, ymax=conf.high), color="gray")
+
+Fig3c+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group_col), alpha=.2)
 
 #test code
-#1
-ggplot(sub.df.test, aes(x)) + 
-  geom_line(aes(y=predicted), colour="black") + 
-  geom_ribbon(aes(ymin=conf.low, ymax=conf.high)color="gray", alpha=0.2)
+#plot(predicted ~ x, data=sub.df.test, ylim=c(0,1.1),type='n')
+#polygon(c(sub.df.test$x,rev(sub.df.test$x)),c(sub.df.test$conf.low,rev(sub.df.test$conf.high)),col = "grey75", border = FALSE)
 
-#2
-ggplot(sub.df, aes(x = x, y = predicted, color=group)) + theme_bw()+
-  geom_smooth(stat = 'summary', fun.y = mean, se =TRUE) +
-  stat_summary(fun.y = mean, geom="line")
+plotCI(x=sub.df.test$x, y=sub.df.test$predicted, li=sub.df.test$conf.low, ui=sub.df.test$conf.high)
 
 #and combine these together:
 
