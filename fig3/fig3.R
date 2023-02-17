@@ -344,26 +344,24 @@ sub.df.test = subset(int.df,group == "Alphavirus")
 #   coord_flip(ylim=c(0,1.1)) #+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
 
 # @ Emily, not sure if you can find a way to get the confidence intervals back...?
-Fig3c <- ggplot(data=sub.df) + theme_bw() +
+Fig3c <- ggplot(data=sub.df, aes(x=x, y=predicted, color=group)) + theme_bw() +
   theme(panel.grid = element_blank(), legend.title = element_blank(),
         legend.position = "bottom",legend.background = element_rect(color="black"),
         legend.direction = "horizontal",
         axis.title = element_text(size=16), axis.text = element_text(size=14),
         plot.margin = unit(c(.5,.1,.1,.1), "cm")) +
-  geom_line(aes(x=x, y=predicted, color=group_col))+ 
+  geom_line()+
   ylab("serostatus") + xlab("mass : forearm residual") +
   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
-  coord_cartesian(ylim=c(0,1.1)) 
+  coord_cartesian(ylim=c(0,1.1)) + 
+  geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill=group), alpha=.5, color=NA)
 
-Fig3c + geom_errorbar(aes(x=x, ymin=conf.low, ymax=conf.high), color="gray")
-
-Fig3c+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group_col), alpha=.2)
-
-#test code
+#test code doesn't work
 #plot(predicted ~ x, data=sub.df.test, ylim=c(0,1.1),type='n')
 #polygon(c(sub.df.test$x,rev(sub.df.test$x)),c(sub.df.test$conf.low,rev(sub.df.test$conf.high)),col = "grey75", border = FALSE)
+#plotCI(x=sub.df.test$x, y=sub.df.test$predicted, li=sub.df.test$conf.low, ui=sub.df.test$conf.high)
+#Fig3c + geom_errorbar(aes(x=x, ymin=conf.low, ymax=conf.high), color="gray")
 
-plotCI(x=sub.df.test$x, y=sub.df.test$predicted, li=sub.df.test$conf.low, ui=sub.df.test$conf.high)
 
 #and combine these together:
 
