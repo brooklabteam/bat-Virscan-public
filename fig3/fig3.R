@@ -341,7 +341,7 @@ sub.df.test = subset(int.df,group == "Alphavirus")
 #   coord_flip(ylim=c(0,1.1)) #+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
 
 # @ Emily, not sure if you can find a way to get the confidence intervals back...?
-Fig3c <- ggplot(data=sub.df.test) + theme_bw() +
+Fig3c <- ggplot(data=sub.df) + theme_bw() +
   theme(panel.grid = element_blank(), legend.title = element_blank(),
         legend.position = "bottom",legend.background = element_rect(color="black"),
         legend.direction = "horizontal",
@@ -350,9 +350,20 @@ Fig3c <- ggplot(data=sub.df.test) + theme_bw() +
   geom_line(aes(x=x, y=predicted, color=group))+ 
   ylab("serostatus") + xlab("mass : forearm residual") +
   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
-  coord_cartesian(ylim=c(0,1.1)) + geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
+  coord_cartesian(ylim=c(0,1.1)) 
 
+Fig3c+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.2)
 
+#test code
+#1
+ggplot(sub.df.test, aes(x)) + 
+  geom_line(aes(y=predicted), colour="black") + 
+  geom_ribbon(aes(ymin=conf.low, ymax=conf.high)color="gray", alpha=0.2)
+
+#2
+ggplot(sub.df, aes(x = x, y = predicted, color=group)) + theme_bw()+
+  geom_smooth(stat = 'summary', fun.y = mean, se =TRUE) +
+  stat_summary(fun.y = mean, geom="line")
 
 #and combine these together:
 
