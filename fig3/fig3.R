@@ -292,16 +292,16 @@ int.df$conf.high[int.df$group=="Rubivirus"] <- (int.df$predicted[int.df$group=="
 
 
 #Also for the Supp Matt, plot it all
-FigS5 <- ggplot(data=int.df, aes(x=x, y=predicted, color=group)) + 
-         geom_line(show.legend = F)+
-         geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill=group), alpha=.3, color=NA)+
+FigS5 <- ggplot(data=int.df) + 
+         geom_line(aes(x=x, y=predicted, color=group), show.legend = F)+
+         geom_ribbon(data=int.df, aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.5, color=NA)+
          facet_wrap(group~.) + ylab("serostatus") + xlab("mass : forearm residuals") +
          scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
          coord_cartesian(ylim=c(0,1.1)) + theme_bw() + 
          geom_label(aes(x=0,y=.85, label=sig_label), label.size = 0, size=5) +
          theme(panel.grid = element_blank(), strip.background = element_blank(), 
-               strip.text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=9))
-        #geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill=group), alpha=.5, color=NA)
+               strip.text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=9)) 
+        
 
 
 ggsave(file = paste0(homewd,"/supp-figures/figS5.png"),
@@ -345,17 +345,17 @@ sub.df.test = subset(int.df,group == "Alphavirus")
 #   coord_flip(ylim=c(0,1.1)) #+ geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.1)
 
 # @ Emily, not sure if you can find a way to get the confidence intervals back...?
-Fig3c <- ggplot(data=sub.df, aes(x=x, y=predicted, color=group)) + theme_bw() +
+Fig3c <- ggplot(data=sub.df) + theme_bw() +
   theme(panel.grid = element_blank(), legend.title = element_blank(),
         legend.position = "bottom",legend.background = element_rect(color="black"),
         legend.direction = "horizontal",
         axis.title = element_text(size=16), axis.text = element_text(size=14),
         plot.margin = unit(c(.5,.1,.1,.1), "cm")) +
-  geom_line()+
+  geom_line(aes(x=x, y=predicted, color=group))+
   ylab("serostatus") + xlab("mass : forearm residual") +
   scale_y_continuous(breaks=c(0,1)) + geom_vline(xintercept = 0, linetype=2) +
   coord_cartesian(ylim=c(0,1.1)) + 
-  geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill=group), alpha=.5, color=NA)
+  geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=.5, color=NA)
 
 #test code doesn't work
 #plot(predicted ~ x, data=sub.df.test, ylim=c(0,1.1),type='n')
