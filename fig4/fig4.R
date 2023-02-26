@@ -183,7 +183,7 @@ dat1$pred <- "age"
 dat1$label <- "A"
 
 dat1$label_x = 1
-dat1$label_y = 550
+dat1$label_y = 1050
 
 dat2 <- p2$data
 head(dat2)
@@ -192,7 +192,7 @@ dat2$pred <- "mass : forearm residuals"
 dat2$label <- "C"
 
 dat2$label_x = -140
-dat2$label_y = 550
+dat2$label_y = 1050
 
 
 
@@ -203,7 +203,7 @@ dat3$pred <- "age"
 dat3$label <- "B"
 
 dat3$label_x = 1
-dat3$label_y = 19
+dat3$label_y = 34
 
 dat4 <- p4$data
 head(dat4)
@@ -211,20 +211,57 @@ dat4$response <-  "viral exposures"
 dat4$pred <- "mass : forearm residuals"
 dat4$label <- "D"
 dat4$label_x = -140
-dat4$label_y = 19
+dat4$label_y = 34
 
 # join the datasets
 combine.df <- rbind(dat1,dat2,dat3,dat4)
 head(combine.df)
 
+unique(combine.df$response)
+unique(combine.df$pred)
 
+#and summarise data to include
+library(reshape2)
+ind.slim <- dplyr::select(ind.dat, ID, age_tooth, mass_residuals, tot_hits, N_exposures)
+head(ind.slim)
+ind.sum.age <- melt(ind.slim, id.vars = c("ID", "age_tooth"))
+head(ind.sum.age)
+ind.sum.age = subset(ind.sum.age, variable!="mass_residuals")
+ind.sum.mass <- melt(ind.slim, id.vars = c("ID", "mass_residuals"))
+ind.sum.mass = subset(ind.sum.mass, variable!="age_tooth")
+names(ind.sum.age) <- c("ID", "x", "response", "y")
+head(ind.sum.age)
+ind.sum.age$pred <- "age"
+ind.sum.age$response <-  as.character(ind.sum.age$response)
+ind.sum.age$response[ind.sum.age$response=="tot_hits"] <- "total peptide hits"
+ind.sum.age$response[ind.sum.age$response=="N_exposures"] <- "viral exposures"
 
+head(ind.sum.mass)
+names(ind.sum.mass) <- c("ID", "x", "response", "y")
+head(ind.sum.mass)
+ind.sum.mass$pred <- "mass : forearm residuals"
+ind.sum.mass$response <-  as.character(ind.sum.mass$response)
+ind.sum.mass$response[ind.sum.mass$response=="tot_hits"] <- "total peptide hits"
+ind.sum.mass$response[ind.sum.mass$response=="N_exposures"] <- "viral exposures"
+
+head(ind.sum.mass)
+
+ind.sum <- rbind(ind.sum.age, ind.sum.mass)
+head(ind.sum)
+max(ind.sum$y[ind.sum$response=="viral exposures"]) #88
+max(combine.df$predicted[combine.df$response=="viral exposures"]) #16
+
+ind.sum$flag=0
+ind.sum$flag[ind.sum$response=="viral exposures" & ind.sum$y>40] <- 1
+ind.sum$flag[ind.sum$pred=="mass : forearm residuals" & ind.sum$x< -150] <- -1
+ind.sum <- subset(ind.sum, flag==0)
 #plot with ggplot:
 
 Fig4 <- ggplot(data=combine.df) + 
   geom_ribbon(aes(x=x, ymin=conf.low, ymax=conf.high), alpha=.3) +
   geom_line(aes(x=x, y=predicted)) + 
   geom_label(aes(x=label_x, y=label_y, label=label), label.size = 0, size=6, fontface="bold") +
+  geom_point(data=ind.sum, (aes(x=x, y=y)), color="gray40") +
   facet_grid(response~pred, scales="free", switch = "both") + theme_bw() +
   theme(panel.grid = element_blank(), axis.title = element_blank(),
         strip.background = element_blank(),
