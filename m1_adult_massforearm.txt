@@ -1,0 +1,20 @@
+
+Call:
+lm(formula = Mass_g ~ Forearm_mm, data = subset(meta, Age_cat == 
+    "Adult" & Species == "Pteropus alecto"))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-185.119  -60.613   -8.113   45.884  197.876 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -1203.067    338.411  -3.555 0.000849 ***
+Forearm_mm     11.401      2.003   5.691 6.97e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 86.84 on 49 degrees of freedom
+Multiple R-squared:  0.398,	Adjusted R-squared:  0.3857 
+F-statistic: 32.39 on 1 and 49 DF,  p-value: 6.97e-07
+
