@@ -428,7 +428,7 @@ Fig2c <- ggplot(data=pa.genus) + geom_bar(aes(x=virus_genus, y=seroprev, fill=vi
                       axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_text(size=16))+
   labs(x="", y="seroprevalence\n")+theme(legend.position="none")+ylim(0,0.35)+scale_fill_grey()
 
-Fig2abc <- cowplot::plot_grid(Fig2a, Fig2b, Fig2c, ncol=1, nrow=3, labels = c("A", "B", "C"), label_size = 20)
+#Fig2abc <- cowplot::plot_grid(Fig2a, Fig2b, Fig2c, ncol=1, nrow=3, labels = c("A", "B", "C"), label_size = 20)
 Fig2ac <- cowplot::plot_grid(Fig2a, Fig2c,ncol=1, nrow=2, labels = c("A", "B"), label_size = 20)
 
 
@@ -592,13 +592,13 @@ Fig2d1 <- ggplot(data=bat.ID.sum) + theme_bw() +
         plot.margin = unit(c(.1,.1,1.5,.1), "cm"),
         axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_blank())+scale_fill_grey()
 
-Fig2d2 <- ggplot(data=bat.ID.sum) + theme_bw() +
-  geom_boxplot(aes(x=species, y=N_exposures, fill=species), scale = "width",
-               draw_quantiles=c(0.025,0.5,0.975), show.legend = F) + ylab("number viruses detected") +
-  #geom_jitter(aes(x=species, y=N_exposures),size=1,width=.1,height=0) +
-  theme(panel.grid = element_blank(), axis.text.x = element_text(size=14, face="italic", color="black"),
-        plot.margin = unit(c(.1,.1,1.5,.1), "cm"),
-        axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_blank())
+# Fig2d2 <- ggplot(data=bat.ID.sum) + theme_bw() +
+#   geom_boxplot(aes(x=species, y=N_exposures, fill=species), scale = "width",
+#                draw_quantiles=c(0.025,0.5,0.975), show.legend = F) + ylab("number viruses detected") +
+#   #geom_jitter(aes(x=species, y=N_exposures),size=1,width=.1,height=0) +
+#   theme(panel.grid = element_blank(), axis.text.x = element_text(size=14, face="italic", color="black"),
+#         plot.margin = unit(c(.1,.1,1.5,.1), "cm"),
+#         axis.text.y=element_text(size=14,color="black"),axis.title.y=element_text(size=16),axis.title.x=element_blank())
 
 
 #bat.ID.sum$species <- factor(bat.ID.sum$species, levels =rev(c("Eonycteris spelaea", "Pteropus alecto", "Homo sapiens")))
@@ -617,7 +617,7 @@ sum.dat <- ddply(bat.ID.sum, .(species), summarise, mean=mean(N_exposures), medi
 
 
 #and plot
-Fig2def <- cowplot::plot_grid(Fig2d3, Fig2d1, ncol=1, nrow=3, labels = c("D", "E"), label_size = 20)
+#Fig2def <- cowplot::plot_grid(Fig2d3, Fig2d1, ncol=1, nrow=3, labels = c("D", "E"), label_size = 20)
 Fig2cd <- cowplot::plot_grid(Fig2d3, Fig2d1, ncol=1, nrow=2, labels = c("C", "D"), label_size = 20)
 
 
