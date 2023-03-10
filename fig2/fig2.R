@@ -108,13 +108,22 @@ meta$predicted_mass_g[meta$Age_cat=="Sub Adult" &!is.na(meta$Mass_g)& meta$Speci
 
 #and plot
 # This can be supplementary FigS3 of the paper
+# This can be supplementary FigS3 of the paper
+library(ggtext)
+ann_text <- data.frame(Age_cat = c("Adult",  "Sub Adult" ), 
+                       xpos = c(155,155), ypos = c(955,955), 
+                       lab = c("0.386","0.453"))
+
 FigS3 <- ggplot(data=subset(meta, !is.na(Age_cat) & Age_cat!="Juvenile" & Species=="Pteropus alecto")) + 
   geom_point(aes(x=Forearm_mm, y=Mass_g, color=Age_cat, shape=Sex)) +
   facet_grid(Age_cat~.) + ylab("mass (g)") + xlab("forearm (mm)") +
   geom_line(aes(x=Forearm_mm, y=predicted_mass_g)) + theme_bw() +
-  theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"))
+  theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"))+
+  geom_richtext(data = ann_text, size=3, vjust=0, hjust=0,aes(x = xpos,  y = ypos, label = paste0("adj R<sup>2</sup> = ", lab))
+  )
 
-ggsave(file = paste0(homewd,"/supp-figures/figS3.png"),
+
+ggsave(file = paste0(homewd,"/supp-figures/figS3_annotated.png"),
        plot=FigS3,
        units="mm",  
        width=50, 
