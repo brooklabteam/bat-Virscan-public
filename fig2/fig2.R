@@ -387,6 +387,23 @@ length(unique(es.genus$virus_genus)) #9
 
 sort(as.character(unique(pa.genus$virus_genus)))
 
+# [1] "Alphainfluenzavirus" "Alphatorquevirus"    "Alphavirus"          "Avulavirus"          "Betacoronavirus"    
+# [6] "Betainfluenzavirus"  "Betapapillomavirus"  "Betapolyomavirus"    "Circovirus"          "Deltavirus"         
+# [11] "Ebolavirus"          "Enterovirus"         "Erythroparvovirus"   "Flavivirus"          "Gammainfluenzavirus"
+# [16] "Gammaretrovirus"     "Henipavirus"         "Hepacivirus"         "Hepatovirus"         "Husavirus"          
+# [21] "Lentivirus"          "Lymphocryptovirus"   "Lyssavirus"          "Mammarenavirus"      "Marburgvirus"       
+# [26] "Mastadenovirus"      "Metapneumovirus"     "Molluscipoxvirus"    "Norovirus"           "Orthobunyavirus"    
+# [31] "Orthohantavirus"     "Orthohepadnavirus"   "Orthohepevirus"      "Orthonairovirus"     "Orthopneumovirus"   
+# [36] "Orthopoxvirus"       "Orthoreovirus"       "Parapoxvirus"        "Parechovirus"        "Pegivirus"          
+# [41] "Phlebovirus"         "Picobirnavirus"      "Respirovirus"        "Roseolovirus"        "Rotavirus"          
+# [46] "Rubivirus"           "Salivirus"           "Sapovirus"           "Seadornavirus"       "Simplexvirus"       
+# [51] "Spumavirus"          "Tl2011virus"         "unc. Arena"          "unc. Cyclo"          "unc. Papilloma"     
+# [56] "unc. Polyoma"        "Vesiculovirus" 
+
+#sort(as.character(unique(es.genus$virus_genus)))
+# [1] "Alphavirus"        "Avulavirus"        "Enterovirus"       "Marburgvirus"      "Orthohepadnavirus"
+# [6] "Orthopneumovirus"  "Sapovirus"         "Simplexvirus"      "Spumavirus"     
+
 ## ideally, would make nested color ramp with virus genus colors nested in virus subfamily and family colors
 
 Fig2a <- ggplot(data=pa.family) + geom_bar(aes(x=virus_family, y=seroprev, fill=virus_family), stat="identity", position = "dodge") + facet_grid(~cat)+
