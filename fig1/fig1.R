@@ -321,7 +321,7 @@ plot.heat.bigger <- function(df, all.bat, leg.name){
       scale_fill_viridis_c(values=c(0,.05,.1,1), limits=c(0,330), na.value = "gray", name="peptide\ncounts") + scale_y_discrete(position = "right") +
       facet_nested(virus_subfamily + virus_genus~., scales = "free", space = "free_y",
                    switch = "y", strip = custom_strips) + coord_cartesian(expand=F) + ggtitle(label = unique(df$virus_family)) +
-      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "white")
+      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "black")
     
     
   }else{
@@ -337,7 +337,7 @@ plot.heat.bigger <- function(df, all.bat, leg.name){
       scale_fill_viridis_c(values=c(0,.05,.1,1), limits=c(0,330), na.value = "gray", name="peptide\ncounts") + scale_y_discrete(position = "right") +
       facet_nested(virus_subfamily + virus_genus~., scales = "free", space = "free_y",
                    switch = "y", strip = custom_strips) + coord_cartesian(expand=F) + ggtitle(label = unique(df$virus_family), ) +
-      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "white")
+      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "black")
   }
   return(p1)
   
@@ -348,22 +348,31 @@ pa.plot.list <- lapply(pa.list, plot.heat, all.bat=sort(unique(pa.dat$rank)),  l
 
 plot.list.a <- list()
 plot.list.b <- list()
-for(i in 1:16){
+plot.list.c <- list()
+plot.list.d <- list()
+for(i in 1:8){
   plot.list.a[[i]] <- pa.list[[i]]
 }
-for(i in 1:14){
-  plot.list.b[[i]] <- pa.list[[16+i]]
+for(i in 1:8){
+  plot.list.b[[i]] <- pa.list[[8+i]]
+}
+for(i in 1:8){
+  plot.list.c[[i]] <- pa.list[[16+i]]
+}
+for(i in 1:6){
+  plot.list.d[[i]] <- pa.list[[24+i]]
 }
 
-
-plot.list.a1 <- lapply(plot.list.a, plot.heat.bigger, all.bat=sort(unique(pa.dat$rank)),  leg.name="Nairoviridae")
-plot.list.a2 <- lapply(plot.list.b, plot.heat.bigger, all.bat=sort(unique(pa.dat$rank)),  leg.name="Togaviridae")
+plot.list.a1 <- lapply(plot.list.a, plot.heat.bigger, all.bat=sort(unique(pa.dat$rank)),  leg.name="Circoviridae")
+plot.list.a2 <- lapply(plot.list.b, plot.heat.bigger, all.bat=sort(unique(pa.dat$rank)),  leg.name="Nairoviridae")
+plot.list.a3 <- lapply(plot.list.c, plot.heat.bigger, all.bat=sort(unique(pa.dat$rank)),  leg.name="Pneumoviridae")
+plot.list.a4 <- lapply(plot.list.d, plot.heat.bigger, all.bat=sort(unique(pa.dat$rank)),  leg.name="Togaviridae")
 #legend <-  plot.heat(pa.list[[1]],all.bat=sort(unique(pa.dat$rank)), return.leg=T)
 
-figS1a <- cowplot::plot_grid(plotlist = plot.list.a1, ncol = 4, nrow=4, align = "v", axis="lr")    
+figS1a <- cowplot::plot_grid(plotlist = plot.list.a1, ncol = 2, nrow=4, align = "v", axis="lr")    
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS1a_test.pdf"),
+ggsave(file = paste0(homewd,"/supp-figures/figS1a.pdf"),
        plot=figS1a,
        units="mm",  
        width=200, 
@@ -371,7 +380,7 @@ ggsave(file = paste0(homewd,"/supp-figures/figS1a_test.pdf"),
        scale=3.5, 
        dpi=300)
 
-figS1b <- cowplot::plot_grid(plotlist = plot.list.a2, ncol = 4, nrow=4, align = "v", axis="lr")    
+figS1b <- cowplot::plot_grid(plotlist = plot.list.a2, ncol = 2, nrow=4, align = "v", axis="lr")    
 
 
 ggsave(file = paste0(homewd,"/supp-figures/figS1b.pdf"),
@@ -382,10 +391,30 @@ ggsave(file = paste0(homewd,"/supp-figures/figS1b.pdf"),
        scale=3, 
        dpi=300)
 
-#and again,
+figS1c <- cowplot::plot_grid(plotlist = plot.list.a3, ncol = 2, nrow=4, align = "v", axis="lr")    
 
 
-#then combine as 2 pages
+ggsave(file = paste0(homewd,"/supp-figures/figS1c.pdf"),
+       plot=figS1c,
+       units="mm",  
+       width=200, 
+       height=200, #280 is a full page
+       scale=3, 
+       dpi=300)
+
+figS1d <- cowplot::plot_grid(plotlist = plot.list.a4, ncol = 2, nrow=4, align = "v", axis="lr")    
+
+
+ggsave(file = paste0(homewd,"/supp-figures/figS1d.pdf"),
+       plot=figS1d,
+       units="mm",  
+       width=200, 
+       height=200, #280 is a full page
+       scale=3, 
+       dpi=300)
+
+
+#then combine as 4 pages
 
 
 #repeat for Eonycteris
