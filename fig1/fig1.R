@@ -15,6 +15,7 @@ library(ggpubr)
 
 
 #set wd - make a link to homewd for your own folder
+homewd = "/Users/emilyruhs/Desktop/UChi_Brook_Lab/GitHub_repos/bat-VirScan-public"
 homewd = "/Users/carabrook/Developer/bat-VirScan-public"
 setwd(homewd)
 
@@ -320,7 +321,7 @@ plot.heat.bigger <- function(df, all.bat, leg.name){
       scale_fill_viridis_c(values=c(0,.05,.1,1), limits=c(0,330), na.value = "gray", name="peptide\ncounts") + scale_y_discrete(position = "right") +
       facet_nested(virus_subfamily + virus_genus~., scales = "free", space = "free_y",
                    switch = "y", strip = custom_strips) + coord_cartesian(expand=F) + ggtitle(label = unique(df$virus_family)) +
-      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "black")
+      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "white")
     
     
   }else{
@@ -336,7 +337,7 @@ plot.heat.bigger <- function(df, all.bat, leg.name){
       scale_fill_viridis_c(values=c(0,.05,.1,1), limits=c(0,330), na.value = "gray", name="peptide\ncounts") + scale_y_discrete(position = "right") +
       facet_nested(virus_subfamily + virus_genus~., scales = "free", space = "free_y",
                    switch = "y", strip = custom_strips) + coord_cartesian(expand=F) + ggtitle(label = unique(df$virus_family), ) +
-      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "black")
+      geom_vline(xintercept = seq(1.5, (max(df1$rank)+.5),1), color = "white")
   }
   return(p1)
   
@@ -362,7 +363,7 @@ plot.list.a2 <- lapply(plot.list.b, plot.heat.bigger, all.bat=sort(unique(pa.dat
 figS1a <- cowplot::plot_grid(plotlist = plot.list.a1, ncol = 4, nrow=4, align = "v", axis="lr")    
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS1a.pdf"),
+ggsave(file = paste0(homewd,"/supp-figures/figS1a_test.pdf"),
        plot=figS1a,
        units="mm",  
        width=200, 
