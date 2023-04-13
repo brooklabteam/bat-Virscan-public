@@ -114,7 +114,7 @@ ann_text <- data.frame(Age_cat = c("Adult",  "Sub Adult" ),
                        xpos = c(155,155), ypos = c(955,955), 
                        lab = c("0.386","0.453"))
 
-FigS3 <- ggplot(data=subset(meta, !is.na(Age_cat) & Age_cat!="Juvenile" & Species=="Pteropus alecto")) + 
+FigS1 <- ggplot(data=subset(meta, !is.na(Age_cat) & Age_cat!="Juvenile" & Species=="Pteropus alecto")) + 
   geom_point(aes(x=Forearm_mm, y=Mass_g, color=Age_cat, shape=Sex)) +
   facet_grid(Age_cat~.) + ylab("mass (g)") + xlab("forearm (mm)") +
   geom_line(aes(x=Forearm_mm, y=predicted_mass_g)) + theme_bw() +
@@ -123,7 +123,7 @@ FigS3 <- ggplot(data=subset(meta, !is.na(Age_cat) & Age_cat!="Juvenile" & Specie
   )
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS3_annotated.png"),
+ggsave(file = paste0(homewd,"/supp-figures/figS1_annotated.png"),
        plot=FigS3,
        units="mm",  
        width=50, 

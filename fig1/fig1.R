@@ -369,10 +369,10 @@ plot.list.a3 <- lapply(plot.list.c, plot.heat.bigger, all.bat=sort(unique(pa.dat
 plot.list.a4 <- lapply(plot.list.d, plot.heat.bigger, all.bat=sort(unique(pa.dat$rank)),  leg.name="Togaviridae")
 #legend <-  plot.heat(pa.list[[1]],all.bat=sort(unique(pa.dat$rank)), return.leg=T)
 
-figS1a <- cowplot::plot_grid(plotlist = plot.list.a1, ncol = 2, nrow=4, align = "v", axis="lr")    
+figS2a <- cowplot::plot_grid(plotlist = plot.list.a1, ncol = 2, nrow=4, align = "v", axis="lr")    
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS1a.pdf"),
+ggsave(file = paste0(homewd,"/supp-figures/figS2a.pdf"),
        plot=figS1a,
        units="mm",  
        width=200, 
@@ -380,10 +380,10 @@ ggsave(file = paste0(homewd,"/supp-figures/figS1a.pdf"),
        scale=3.5, 
        dpi=300)
 
-figS1b <- cowplot::plot_grid(plotlist = plot.list.a2, ncol = 2, nrow=4, align = "v", axis="lr")    
+figS2b <- cowplot::plot_grid(plotlist = plot.list.a2, ncol = 2, nrow=4, align = "v", axis="lr")    
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS1b.pdf"),
+ggsave(file = paste0(homewd,"/supp-figures/figS2b.pdf"),
        plot=figS1b,
        units="mm",  
        width=200, 
@@ -391,10 +391,10 @@ ggsave(file = paste0(homewd,"/supp-figures/figS1b.pdf"),
        scale=3, 
        dpi=300)
 
-figS1c <- cowplot::plot_grid(plotlist = plot.list.a3, ncol = 2, nrow=4, align = "v", axis="lr")    
+figS2c <- cowplot::plot_grid(plotlist = plot.list.a3, ncol = 2, nrow=4, align = "v", axis="lr")    
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS1c.pdf"),
+ggsave(file = paste0(homewd,"/supp-figures/figS2c.pdf"),
        plot=figS1c,
        units="mm",  
        width=200, 
@@ -402,10 +402,10 @@ ggsave(file = paste0(homewd,"/supp-figures/figS1c.pdf"),
        scale=3, 
        dpi=300)
 
-figS1d <- cowplot::plot_grid(plotlist = plot.list.a4, ncol = 2, nrow=4, align = "v", axis="lr")    
+figS2d <- cowplot::plot_grid(plotlist = plot.list.a4, ncol = 2, nrow=4, align = "v", axis="lr")    
 
 
-ggsave(file = paste0(homewd,"/supp-figures/figS1d.pdf"),
+ggsave(file = paste0(homewd,"/supp-figures/figS2d.pdf"),
        plot=figS1d,
        units="mm",  
        width=200, 
@@ -428,9 +428,9 @@ es.merge = subset(es.merge, virus_family!="unclassified_family")
 es.list <- dlply(es.merge, .(virus_family))
 
 es.plot.list <- lapply(es.list, plot.heat, all.bat=sort(unique(es.dat$rank)),  leg.name="Togaviridae")
-figS2 <- cowplot::plot_grid(plotlist = es.plot.list, ncol = 4, align = "v", axis="lr")    
+figS3 <- cowplot::plot_grid(plotlist = es.plot.list, ncol = 4, align = "v", axis="lr")    
 
-ggsave(file = paste0(homewd,"/supp-figures/figS2.png"),
+ggsave(file = paste0(homewd,"/supp-figures/figS3.png"),
        plot=figS2,
        units="mm",  
        width=200, 
